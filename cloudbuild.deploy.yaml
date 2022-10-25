@@ -1,4 +1,8 @@
 steps:
+  - id: 'Give perms'
+    name: 'bash'
+    args: ['chmod', 'u+x', './scripts/decryptSecrets.sh']
+
   - id: 'decrypt secrets files'
     name: 'bash'
     args: ['./scripts/decryptSecrets.sh']
