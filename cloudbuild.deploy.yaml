@@ -5,7 +5,7 @@ steps:
 
   - id: 'build docker image'
     name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t', 'madrid-reds-graphql:$COMMIT_SHA', '.', '--build-arg', 'ENVIRONMENT="development"', '--build-arg', 'PORT=$_FOO' ]
+    args: [ 'build', '-t', 'madrid-reds-graphql:$COMMIT_SHA', '.', '--build-arg', 'ENVIRONMENT="development"', '--build-arg', 'PORT=$_PORT' ]
 
   - id: 'tag docker image'
     name: 'gcr.io/cloud-builders/docker'
@@ -18,4 +18,4 @@ steps:
   - id: 'deploy image'
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: [ 'run', 'deploy', 'madrid-reds-graphql', '--image', 'northamerica-northeast2-docker.pkg.dev/spotify-application-356414/madrid-reds/madrid-reds-graphql:$COMMIT_SHA', '--region', 'northamerica-northeast2', '--memory', '128Mi', '--port', '$_FOO', '--allow-unauthenticated', '--cpu-throttling']
+    args: [ 'run', 'deploy', 'madrid-reds-graphql', '--image', 'northamerica-northeast2-docker.pkg.dev/spotify-application-356414/madrid-reds/madrid-reds-graphql:$COMMIT_SHA', '--region', 'northamerica-northeast2', '--memory', '128Mi', '--port', '$_PORT', '--allow-unauthenticated', '--cpu-throttling']
