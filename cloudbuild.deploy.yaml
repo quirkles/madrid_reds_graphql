@@ -1,10 +1,11 @@
 steps:
-  - id: 'Give perms'
+  - id: 'give perms'
     name: 'bash'
     args: ['chmod', 'u+x', './scripts/decryptSecrets.sh']
 
   - id: 'decrypt secrets files'
     name: 'bash'
+    dir: 'scripts'
     args: ['./scripts/decryptSecrets.sh']
 
   - id: 'build docker image'
