@@ -10,9 +10,12 @@ const {
   DATABASE_NAME
 } = appConfig
 
-const url = `${urlProtocol}${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}/${DATABASE_NAME}?retryWrites=true&w=majority`
-
 export const AppDataSource = new DataSource({
-  type: "mongodb",
-  url
+  type: 'mongodb',
+  host: DATABASE_HOST,
+  port: 27017,
+  username: DATABASE_USERNAME,
+  password: DATABASE_PASSWORD,
+  database: DATABASE_NAME,
+  authSource: 'admin'
 })

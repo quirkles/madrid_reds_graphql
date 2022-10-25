@@ -1,11 +1,10 @@
-import { createConnection } from 'typeorm'
-import { ApolloServer } from 'apollo-server'
-import { buildSchema } from 'type-graphql'
+import { AppDataSource } from './datasource'
 
 export async function startServer () {
-  const connection = await createConnection()
-  const schema = await buildSchema()
-  const server = new ApolloServer({ schema })
-  await server.listen(4000)
-  console.log('Server has started!')
+  try {
+    await AppDataSource.initialize()
+    console.log('Connected to database')
+  } catch (e) {
+    console.error(`Failed to connect to data source: ${(e as Error).message}`)
+  }
 }
