@@ -1,0 +1,21 @@
+steps:
+  - id: 'decrypt secrets files'
+    name: 'bash'
+    args: ['./scripts/decryptSecrets.sh']
+
+  - id: 'build docker image'
+    name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'madrid-reds-graphql:$COMMIT_SHA', '.', '--build-arg', 'ENVIRONMENT="development"', '--build-arg', 'PORT=$_FOO' ]
+
+  - id: 'tag docker image'
+    name: 'gcr.io/cloud-builders/docker'
+    args: [ 'tag', 'madrid-reds-graphql:$COMMIT_SHA', 'northamerica-northeast2-docker.pkg.dev/spotify-application-356414/madrid-reds/madrid-reds-graphql:$COMMIT_SHA']
+
+  - id: 'push docker image'
+    name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'northamerica-northeast2-docker.pkg.dev/spotify-application-356414/madrid-reds/madrid-reds-graphql:$COMMIT_SHA']
+
+  - id: 'deploy image'
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'madrid-reds-graphql', '--image', 'northamerica-northeast2-docker.pkg.dev/spotify-application-356414/madrid-reds/madrid-reds-graphql:$COMMIT_SHA', '--region', 'northamerica-northeast2', '--memory', '128Mi', '--port', '$_FOO', '--allow-unauthenticated', '--cpu-throttling']

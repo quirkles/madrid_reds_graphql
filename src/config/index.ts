@@ -9,6 +9,7 @@ import { configProd } from './config.prod'
 export interface Config {
     CLOUD_NAME: string;
     EMAIL_ADDRESS: string;
+    PORT: string;
 }
 
 export interface Secrets {

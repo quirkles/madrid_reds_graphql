@@ -1,3 +1,5 @@
+import 'reflect-metadata'
+
 import { startServer } from './server'
 
 async function main () {
@@ -9,5 +11,5 @@ main()
         console.log("Started app.") //eslint-disable-line
   })
   .catch(err => {
-    console.error(err) //eslint-disable-line
+        console.error(err) //eslint-disable-line
   })
