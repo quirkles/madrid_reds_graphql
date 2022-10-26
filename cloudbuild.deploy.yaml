@@ -1,12 +1,47 @@
 steps:
-  - id: 'give perms'
-    name: 'bash'
-    args: ['chmod', 'u+x', './scripts/decryptSecrets.sh']
+  - id: 'decrypt base secrets file'
+    name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - kms
+      - decrypt
+      - --ciphertext-file=./secrets.base.ts.enc
+      - --plaintext-file=./secrets.base.ts
+      - --location=global
+      - --keyring=madrid-reds
+      - --key=secrets-enc-key
 
-  - id: 'decrypt secrets files'
-    name: 'bash'
-    dir: 'scripts'
-    args: ['./decryptSecrets.sh']
+  - id: 'decrypt local secrets file'
+    name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - kms
+      - decrypt
+      - --ciphertext-file=./secrets.local.ts.enc
+      - --plaintext-file=./secrets.local.ts
+      - --location=global
+      - --keyring=madrid-reds
+      - --key=secrets-enc-key
+
+  - id: 'decrypt dev secrets file'
+    name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - kms
+      - decrypt
+      - --ciphertext-file=./secrets.dev.ts.enc
+      - --plaintext-file=./secrets.dev.ts
+      - --location=global
+      - --keyring=madrid-reds
+      - --key=secrets-enc-key
+
+  - id: 'decrypt prod secrets file'
+    name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - kms
+      - decrypt
+      - --ciphertext-file=./secrets.prod.ts.enc
+      - --plaintext-file=./secrets.prod.ts
+      - --location=global
+      - --keyring=madrid-reds
+      - --key=secrets-enc-key
 
   - id: 'build docker image'
     name: 'gcr.io/cloud-builders/docker'
