@@ -1,4 +1,4 @@
-FROM node:19-alpine
+FROM node:19.0.0-alpine
 WORKDIR /srv/app
 COPY package.json package-lock.json tsconfig.json ./
 COPY src ./src/

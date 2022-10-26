@@ -15,6 +15,7 @@ let connectionOptions: DataSourceOptions = {
   username: DATABASE_USERNAME,
   password: DATABASE_PASSWORD,
   database: DATABASE_NAME,
+  useUnifiedTopology: true,
   entities: [UserModel]
 }
 if (appConfig.env === 'local') {
