@@ -9,7 +9,7 @@ RUN npm run build
 RUN rm -rf src
 
 ARG PORT=4400
-ARG ENVIRONMENT='development'
+ARG ENVIRONMENT='local'
 ARG DATABASE_HOST='host.docker.internal'
 
 EXPOSE $PORT

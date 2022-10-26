@@ -42,7 +42,7 @@ switch (process.env.ENVIRONMENT as Env | string) {
     env = 'production'
     break
   default:
-    console.log(`Encountered unexpected ENVIRONMENT env var, falling back to ${DEFAULT_ENVIRONMENT}`)
+    console.log(`Encountered unexpected ENVIRONMENT env var: ${process.env.ENVIRONMENT}, falling back to ${DEFAULT_ENVIRONMENT}`)
 }
 
 let config: Config
