@@ -45,7 +45,7 @@ steps:
 
   - id: 'build docker image'
     name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t', 'madrid-reds-graphql:$COMMIT_SHA', '.', '--build-arg', 'ENVIRONMENT="development"', '--build-arg', 'PORT=$_PORT' ]
+    args: [ 'build', '-t', 'madrid-reds-graphql:$COMMIT_SHA', '.', '--build-arg', 'ENVIRONMENT="dev"', '--build-arg', 'PORT=$_PORT' ]
 
   - id: 'tag docker image'
     name: 'gcr.io/cloud-builders/docker'
