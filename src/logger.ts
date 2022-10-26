@@ -11,7 +11,7 @@ const transports: transport[] = [
   // Add Cloud Logging
 ]
 
-if (appConfig.env !== 'local') {
+if (appConfig.IS_GCP) {
   transports.push(new LoggingWinston())
 }
 

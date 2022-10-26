@@ -1,11 +1,19 @@
 import { Resolver, Query } from 'type-graphql'
 
 import { UserModel } from '../datalayer/models'
+import { logger } from '../logger'
 
 @Resolver()
 export class UserResolver {
     @Query(() => [UserModel])
-  users () {
-    return UserModel.find()
+  async users () {
+    try {
+      const users = await UserModel.find()
+      logger.info('users', { users })
+      return users
+    } catch (err) {
+      logger.error(err)
+      return []
+    }
   }
 }

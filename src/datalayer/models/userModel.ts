@@ -4,15 +4,15 @@ import { Field, ID, ObjectType } from 'type-graphql'
 @Entity({ name: 'users' })
 @ObjectType('User', {})
 export class UserModel extends BaseEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({ name: '_id' })
     @Field(() => ID)
       id!: ObjectID
 
     @Field(() => String)
     @Column({ nullable: true })
-      firstName!: string
+      email!: string
 
     @Field(() => String)
     @Column({ nullable: true })
-      lastName!: string
+      name!: string
 }
