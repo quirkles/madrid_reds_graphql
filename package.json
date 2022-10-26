@@ -9,7 +9,9 @@
     "lint:fix": "eslint src --ext .js,.ts --fix",
     "clean": "rm -rf dist",
     "build": "tsc",
-    "run": "node dist/index.js"
+    "run": "node dist/index.js",
+    "run:dev": "ENVIRONMENT=dev node dist/index.js",
+    "run:prod": "ENVIRONMENT=production node dist/index.js"
   },
   "keywords": [],
   "author": "",
