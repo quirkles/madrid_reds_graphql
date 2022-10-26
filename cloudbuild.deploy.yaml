@@ -4,8 +4,8 @@ steps:
     args:
       - kms
       - decrypt
-      - --ciphertext-file=./secrets.base.ts.enc
-      - --plaintext-file=./secrets.base.ts
+      - --ciphertext-file=.src/config/secrets.base.ts.enc
+      - --plaintext-file=.src/config/secrets.base.ts
       - --location=global
       - --keyring=madrid-reds
       - --key=secrets-enc-key
@@ -15,8 +15,8 @@ steps:
     args:
       - kms
       - decrypt
-      - --ciphertext-file=./secrets.local.ts.enc
-      - --plaintext-file=./secrets.local.ts
+      - --ciphertext-file=.src/config/secrets.local.ts.enc
+      - --plaintext-file=.src/config/secrets.local.ts
       - --location=global
       - --keyring=madrid-reds
       - --key=secrets-enc-key
@@ -26,8 +26,8 @@ steps:
     args:
       - kms
       - decrypt
-      - --ciphertext-file=./secrets.dev.ts.enc
-      - --plaintext-file=./secrets.dev.ts
+      - --ciphertext-file=.src/config/secrets.dev.ts.enc
+      - --plaintext-file=.src/config/secrets.dev.ts
       - --location=global
       - --keyring=madrid-reds
       - --key=secrets-enc-key
@@ -37,8 +37,8 @@ steps:
     args:
       - kms
       - decrypt
-      - --ciphertext-file=./secrets.prod.ts.enc
-      - --plaintext-file=./secrets.prod.ts
+      - --ciphertext-file=.src/config/secrets.prod.ts.enc
+      - --plaintext-file=.src/config/secrets.prod.ts
       - --location=global
       - --keyring=madrid-reds
       - --key=secrets-enc-key
