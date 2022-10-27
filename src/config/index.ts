@@ -21,6 +21,8 @@ export interface Secrets {
     DATABASE_PASSWORD: string
     JWT_PASSWORD: string
     EMAIL_PASSWORD: string
+    SENDGRID_API_KEY: string
+
 }
 
 type Env = 'local' | 'dev' | 'production'

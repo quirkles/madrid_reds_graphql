@@ -1,12 +1,19 @@
 import { ApolloServer } from 'apollo-server'
+import { Container } from 'typedi'
 import { buildSchema } from 'type-graphql'
+import { v4 } from 'uuid'
 
 import { AppDataSource } from './datasource'
-import { UserResolver } from './resolvers/userResolver'
+import { UserResolver } from './resolvers'
+import { createContext } from './context'
+import { createLogger } from './logger'
 import { appConfig } from './config'
-import { logger } from './logger'
 
 export async function startServer () {
+  const logger = createLogger({
+    executionId: v4()
+  })
+  Container.set('Logger', logger)
   try {
     await AppDataSource.initialize()
     logger.info('Connected to database')
@@ -15,11 +22,16 @@ export async function startServer () {
   }
 
   const schema = await buildSchema({
+    container: Container,
     resolvers: [UserResolver] // add this
   })
 
-  const server = new ApolloServer({ schema })
-  await server.listen(appConfig.PORT)
+  const server = new ApolloServer({
+    schema,
+    context: createContext
+  })
 
-  logger.info(`Server listening on port: ${appConfig.PORT}`) //eslint-disable-line
+  const { url } = await server.listen(appConfig.PORT)
+
+  logger.info(`Server listening at: ${url}`) //eslint-disable-line
 }
