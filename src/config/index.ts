@@ -10,6 +10,7 @@ export interface Config {
     CLOUD_NAME: string;
     EMAIL_ADDRESS: string;
     PORT: string;
+    IS_GCP: boolean;
 }
 
 export interface Secrets {
