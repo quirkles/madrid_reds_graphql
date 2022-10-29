@@ -1,5 +1,3 @@
-import 'reflect-metadata'
-
 import { startServer } from './server'
 
 async function main () {

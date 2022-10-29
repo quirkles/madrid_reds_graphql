@@ -1,15 +1,11 @@
-import { Inject, Service } from 'typedi'
 import { createTransport, Transporter } from 'nodemailer'
 import nodemailerSendgrid from 'nodemailer-sendgrid'
-import { Logger } from 'winston'
 import { appConfig } from '../config'
+import { injectable } from 'inversify'
 
-@Service('MailerService')
+@injectable()
 export class MailerService {
   private transporter?: Transporter
-
-  @Inject('Logger')
-  private logger!: Logger
 
   async initTransporter () {
     this.transporter = createTransport(nodemailerSendgrid({ apiKey: appConfig.SENDGRID_API_KEY }))
@@ -34,7 +30,13 @@ export class MailerService {
   }
 
   sendConfirmEmailEmail (recipient: string): Promise<void> {
-    const html = '<h2>Welcome to madrid reds</h2><p>Click to confirm your email address</p><br><a href="http://google.com">Click me</a>'
-    return this.sendMail(recipient, 'Confirm your email', 'Click on this link: http;??google.com', html)
+    const html = `
+<h1>Hi!</h1>
+<h2>Welcome to madrid reds!</h2>
+<div>
+    <p>We need to confirm your email address.</p>
+    <p>Click to confirm your email address</p><br><a href="http://google.com">Click me</a>
+</div>`
+    return this.sendMail(recipient, 'Confirm your email', 'Click on this link: http://google.com', html)
   }
 }

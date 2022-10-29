@@ -1,7 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm'
 import { appConfig } from '../config'
 import { UserModel } from '../datalayer/models'
-import { logger } from '../logger'
 
 const {
   DATABASE_USERNAME,
@@ -32,7 +31,5 @@ if (appConfig.env === 'local') {
     ssl: true
   }
 }
-
-logger.info('connectionOptions', connectionOptions)
 
 export const AppDataSource = new DataSource(connectionOptions)

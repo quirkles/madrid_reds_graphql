@@ -1,39 +1,46 @@
+import { Container } from 'inversify'
 import { type IncomingMessage, ServerResponse } from 'http'
-import { Container } from 'typedi'
 import { Logger } from 'winston'
 import { v4 } from 'uuid'
+import { container } from '../container'
 
-export interface ApolloContext {
+export interface AppContext {
   sessionUser?: {
         jwt: string
     }
+    container: Container
+    logger: Logger
 }
 
-export async function createContext (contextArg: {req: IncomingMessage; res: ServerResponse}): Promise<ApolloContext> {
-  const logger: Logger = Container.get('Logger')
-
-  if (logger) {
-    const childLogger = logger.child({
-      requestId: v4()
+export function createContextFunction (logger: Logger) {
+  return async function (contextArg: { req: IncomingMessage; res: ServerResponse }): Promise<AppContext> {
+    const childLogger: Logger = logger.child({
+      requestId: v4(),
+      url: contextArg.req.url || 'unknown',
+      method: contextArg.req.method || 'unknown'
     })
-    childLogger.info('Incoming request', {
-      url: contextArg.req.url,
-      method: contextArg.req.method
-    })
-    Container.set('Logger', childLogger)
-  }
 
-  const context: ApolloContext = {}
+    childLogger.info('Incoming request', {})
 
-  // Try to grab the jwt from the auth header
-  const authHeader = contextArg.req.headers.Authorization
-  if (authHeader && typeof authHeader === 'string') {
-    const regexResult = /Bearer: (?<jwt>[a-zA-Z0-9]+)/.exec(authHeader)
-    const jwt = regexResult?.groups?.jwt
-    if (jwt) {
-      context.sessionUser = { jwt }
+    const childContainer = container.createChild()
+
+    childContainer.bind<Logger>('Logger').toConstantValue(childLogger)
+
+    const context: AppContext = {
+      logger: childLogger,
+      container: childContainer
     }
-  }
 
-  return context
+    // Try to grab the jwt from the auth header
+    const authHeader = contextArg.req.headers.Authorization
+    if (authHeader && typeof authHeader === 'string') {
+      const regexResult = /Bearer: (?<jwt>[a-zA-Z0-9]+)/.exec(authHeader)
+      const jwt = regexResult?.groups?.jwt
+      if (jwt) {
+        context.sessionUser = { jwt }
+      }
+    }
+
+    return context
+  }
 }

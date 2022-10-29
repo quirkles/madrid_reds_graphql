@@ -1,37 +1,49 @@
-import { ApolloServer } from 'apollo-server'
-import { Container } from 'typedi'
-import { buildSchema } from 'type-graphql'
-import { v4 } from 'uuid'
+import 'reflect-metadata'
 
+import { v4 } from 'uuid'
+import { ApolloServer } from 'apollo-server'
+import { buildSchema, ResolverData } from 'type-graphql'
+
+import { container } from './container'
+import { appConfig } from './config'
 import { AppDataSource } from './datasource'
 import { UserResolver } from './resolvers'
-import { createContext } from './context'
+import { AppContext, createContextFunction } from './context'
 import { createLogger } from './logger'
-import { appConfig } from './config'
 
 export async function startServer () {
-  const logger = createLogger({
-    executionId: v4()
-  })
-  Container.set('Logger', logger)
+  const logger = createLogger({ executionId: v4() })
   try {
     await AppDataSource.initialize()
-    logger.info('Connected to database')
   } catch (e) {
     throw new Error(`Failed to connect to data source: ${(e as Error).message}`)
   }
 
   const schema = await buildSchema({
-    container: Container,
-    resolvers: [UserResolver] // add this
+    // container,
+    container: ({ context }: ResolverData<AppContext>) => context.container,
+    resolvers: [UserResolver]
   })
 
   const server = new ApolloServer({
     schema,
-    context: createContext
+    context: createContextFunction(logger),
+    plugins: [
+      {
+        async requestDidStart () {
+          return {
+            async willSendResponse (requestContext) {
+              // remember to dispose the scoped container to prevent memory leaks
+              console.log('unbinding all from child container') //eslint-disable-line
+              requestContext.context.container.unbindAll()
+              console.log('unbinding all from child container done!') //eslint-disable-line
+            }
+          }
+        }
+      }
+    ]
   })
 
   const { url } = await server.listen(appConfig.PORT)
-
-  logger.info(`Server listening at: ${url}`) //eslint-disable-line
+  logger.info(`Server listening at: ${url}`)
 }

@@ -1,5 +1,5 @@
 import { LoggingWinston } from '@google-cloud/logging-winston'
-import winston, { Logger, loggers, type transport } from 'winston'
+import winston, { Logger, type transport } from 'winston'
 import { appConfig } from './config'
 
 const transports: transport[] = [
@@ -10,11 +10,9 @@ const transports: transport[] = [
 if (appConfig.IS_GCP) {
   transports.push(new LoggingWinston())
 }
-export function createLogger (params: {
-  executionId: string
-}): Logger {
+export function createLogger (meta: Record<string, string | number | boolean>): Logger {
   return winston.createLogger({
-    defaultMeta: { executionId: params.executionId },
+    defaultMeta: meta,
     level: 'info',
     transports
   })
