@@ -2,7 +2,7 @@ import { Container } from 'inversify'
 import { type IncomingMessage, ServerResponse } from 'http'
 import { Logger } from 'winston'
 import { v4 } from 'uuid'
-import { container } from '../container'
+import { container, TYPES } from '../container'
 
 export interface AppContext {
   sessionUser?: {
@@ -24,7 +24,7 @@ export function createContextFunction (logger: Logger) {
 
     const childContainer = container.createChild()
 
-    childContainer.bind<Logger>('Logger').toConstantValue(childLogger)
+    childContainer.bind<Logger>(TYPES.logger).toConstantValue(childLogger)
 
     const context: AppContext = {
       logger: childLogger,

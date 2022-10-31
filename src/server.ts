@@ -34,9 +34,7 @@ export async function startServer () {
           return {
             async willSendResponse (requestContext) {
               // remember to dispose the scoped container to prevent memory leaks
-              console.log('unbinding all from child container') //eslint-disable-line
               requestContext.context.container.unbindAll()
-              console.log('unbinding all from child container done!') //eslint-disable-line
             }
           }
         }

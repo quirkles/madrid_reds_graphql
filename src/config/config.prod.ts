@@ -1,6 +1,7 @@
-import { configBase } from './config.base'
-import { Config } from './index'
+import { Config, configBase } from './config.base'
 
 export const configProd: Config = {
-  ...configBase
+  ...configBase,
+  VERIFY_EMAIL_URL: 'https://mr-dev-verify-email-wgvygz45ba-uc.a.run.app/',
+  FRONTEND_URL: 'http://localhost:4444'
 }

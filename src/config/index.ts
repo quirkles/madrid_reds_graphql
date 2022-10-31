@@ -1,34 +1,16 @@
+import { Secrets } from './secrets.base'
 import { secretsLocal } from './secrets.local'
 import { secretsDev } from './secrets.dev'
 import { secretsProd } from './secrets.prod'
 
+import { Config } from './config.base'
 import { configLocal } from './config.local'
 import { configDev } from './config.dev'
 import { configProd } from './config.prod'
 
-export interface Config {
-    CLOUD_NAME: string;
-    EMAIL_ADDRESS: string;
-    PORT: string;
-    IS_GCP: boolean;
-}
-
-export interface Secrets {
-    CLOUD_API_KEY: string
-    CLOUD_API_SECRET: string
-    DATABASE_NAME: string
-    DATABASE_HOST: string
-    DATABASE_USERNAME: string
-    DATABASE_PASSWORD: string
-    JWT_PASSWORD: string
-    EMAIL_PASSWORD: string
-    SENDGRID_API_KEY: string
-
-}
-
 type Env = 'local' | 'dev' | 'production'
 
-type AppConfig = Secrets & Config & { env: Env }
+export interface IAppConfig extends Secrets, Config { env: Env }
 
 const DEFAULT_ENVIRONMENT = 'local' as const
 
@@ -66,7 +48,7 @@ switch (env) {
     break
 }
 
-export const appConfig: AppConfig = {
+export const appConfig: IAppConfig = {
   ...config,
   ...secrets,
   env
