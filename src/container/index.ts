@@ -1,18 +1,44 @@
-import { Container } from 'inversify'
+import { Container, interfaces } from 'inversify'
+import { DataSource } from 'typeorm'
 
 import { ICryptoService, CryptoService, IMailerService, MailerService } from '../services'
 import { UserResolver } from '../resolvers'
 import { appConfig, IAppConfig } from '../config'
 import { TYPES } from './types'
+import { AppDataSource } from '../datasource'
+import Factory = interfaces.Factory;
+import {
+  IUserRepository,
+  IVerificationTokenRepository,
+  userRepositoryFactory,
+  verificationTokenRepositoryFactory
+} from '../datalayer'
 
 const container = new Container({ skipBaseClassChecks: true })
+// Resolvers
 container.bind<UserResolver>(UserResolver).to(UserResolver).inSingletonScope()
 
-container.bind<IMailerService>(TYPES.MailerService).to(MailerService).inSingletonScope()
+// Services
+container.bind<IMailerService>(TYPES.MailerService).to(MailerService)
 
+// Factories
+container.bind<Factory<IUserRepository>>(TYPES.UserRepositoryFactory).toFactory<IUserRepository>((context: interfaces.Context) => {
+  return () => {
+    return userRepositoryFactory(context.container.get(TYPES.dataSource))
+  }
+})
+
+container.bind<Factory<IVerificationTokenRepository>>(TYPES.VerificationTokenFactory).toFactory<IVerificationTokenRepository>((context: interfaces.Context) => {
+  return () => {
+    return verificationTokenRepositoryFactory(context.container.get(TYPES.dataSource))
+  }
+})
+
+// Constants
 container.bind<IAppConfig>(TYPES.appConfig).toConstantValue(appConfig)
 
-const sharedCryptoService = new CryptoService(appConfig)
+const sharedCryptoService = new CryptoService(appConfig) // we use a shared instance so we can generate an iv each time
 container.bind<ICryptoService>(TYPES.cryptoService).toConstantValue(sharedCryptoService)
 
+container.bind<DataSource>(TYPES.dataSource).toConstantValue(AppDataSource)
 export { container, TYPES }

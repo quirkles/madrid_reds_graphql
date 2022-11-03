@@ -22,7 +22,7 @@ class CryptoService implements ICryptoService {
   }
 
   get initializationVectorString (): string {
-    return this.initializationVector.toString()
+    return this.initializationVector.toString('hex')
   }
 
   async encryptString (unencrypted: string): Promise<string> {

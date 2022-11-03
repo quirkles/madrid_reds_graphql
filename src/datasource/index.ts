@@ -1,6 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm'
 import { appConfig } from '../config'
-import { UserModel } from '../datalayer/models'
+import { UserModel, VerificationTokenModel } from '../datalayer/models'
 
 const {
   DATABASE_USERNAME,
@@ -12,7 +12,7 @@ const {
 let connectionOptions: DataSourceOptions = {
   type: 'mongodb',
   useUnifiedTopology: true,
-  entities: [UserModel]
+  entities: [UserModel, VerificationTokenModel]
 }
 if (appConfig.env === 'local') {
   connectionOptions = {

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "nodemon -w src --ext ts --exec ts-node src/index.ts",
+    "watch:local": "ENVIRONMENT=local nodemon -w src --ext ts --exec ts-node src/index.ts",
     "watch:dev": "ENVIRONMENT=dev nodemon -w src --ext ts --exec ts-node src/index.ts",
     "lint": "eslint src --ext .js,.ts",
     "lint:fix": "eslint src --ext .js,.ts --fix",

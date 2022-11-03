@@ -5,6 +5,7 @@ import { ApolloServer } from 'apollo-server'
 import { buildSchema, ResolverData } from 'type-graphql'
 
 import { container } from './container'
+
 import { appConfig } from './config'
 import { AppDataSource } from './datasource'
 import { UserResolver } from './resolvers'
@@ -12,15 +13,15 @@ import { AppContext, createContextFunction } from './context'
 import { createLogger } from './logger'
 
 export async function startServer () {
-  const logger = createLogger({ executionId: v4() })
   try {
     await AppDataSource.initialize()
   } catch (e) {
     throw new Error(`Failed to connect to data source: ${(e as Error).message}`)
   }
 
+  const logger = createLogger({ executionId: v4() })
+
   const schema = await buildSchema({
-    // container,
     container: ({ context }: ResolverData<AppContext>) => context.container,
     resolvers: [UserResolver]
   })
