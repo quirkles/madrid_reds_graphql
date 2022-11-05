@@ -13,7 +13,7 @@ if (appConfig.IS_GCP) {
 export function createLogger (meta: Record<string, string | number | boolean>): Logger {
   return winston.createLogger({
     defaultMeta: meta,
-    level: 'info',
+    level: 'silly',
     transports
   })
 }

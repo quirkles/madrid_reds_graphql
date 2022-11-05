@@ -1,6 +1,9 @@
+import {
+  join
+} from 'path'
 import { DataSource, DataSourceOptions } from 'typeorm'
 import { appConfig } from '../config'
-import { UserModel, VerificationTokenModel } from '../datalayer/models'
+import { UserModel, VerificationTokenModel } from '../datalayer'
 
 const {
   DATABASE_USERNAME,
@@ -9,26 +12,29 @@ const {
   DATABASE_NAME
 } = appConfig
 
-let connectionOptions: DataSourceOptions = {
-  type: 'mongodb',
-  useUnifiedTopology: true,
+const connectionOptionEntities: Pick<DataSourceOptions, 'entities'> = {
   entities: [UserModel, VerificationTokenModel]
 }
+
+let connectionOptions: DataSourceOptions
+
 if (appConfig.env === 'local') {
   connectionOptions = {
-    ...connectionOptions,
-    host: DATABASE_HOST,
-    username: DATABASE_USERNAME,
-    password: DATABASE_PASSWORD,
-    database: DATABASE_NAME,
-    port: 27017,
-    authSource: 'admin'
+    type: 'sqlite',
+    synchronize: true,
+    database: join(__dirname, '../..', 'myDb.db'),
+    ...connectionOptionEntities
   }
 } else {
   connectionOptions = {
-    ...connectionOptions,
-    url: `mongodb+srv://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}/${DATABASE_NAME}?retryWrites=true&w=majority`,
-    ssl: true
+    type: 'postgres',
+    database: DATABASE_NAME,
+    username: DATABASE_USERNAME,
+    password: DATABASE_PASSWORD,
+    host: DATABASE_HOST,
+    port: 27017,
+    ssl: true,
+    ...connectionOptionEntities
   }
 }
 

@@ -7,7 +7,7 @@ import { ICryptoService } from '../crypto'
 import { IAppConfig } from '../../config'
 
 export interface IMailerService {
-  sendConfirmEmail(recipient: string, verificationToken: string): Promise<void>
+  sendConfirmEmail(recipient: string, verificationToken: string, initializationVectorString: string): Promise<void>
 }
 
 @injectable()
@@ -77,9 +77,9 @@ export class MailerService implements IMailerService {
     }
   }
 
-  sendConfirmEmail (recipient: string, verificationToken: string): Promise<void> {
+  sendConfirmEmail (recipient: string, verificationToken: string, initializationVectorString: string): Promise<void> {
     const confirmUrl = `${this.verifyEmailUrl}`
-    const ivString = this.cryptoService.initializationVectorString.toString()
+    const ivString = initializationVectorString
     const html = `
 <h1>Hi!</h1>
 <h2>Welcome to madrid reds!</h2>

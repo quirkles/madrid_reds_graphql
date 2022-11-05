@@ -1,13 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, ObjectID, BaseEntity, OneToMany } from 'typeorm'
+import {
+  Entity,
+  Column,
+  BaseEntity,
+  OneToMany,
+  AfterLoad,
+  PrimaryGeneratedColumn
+} from 'typeorm'
 import { Field, ID, ObjectType } from 'type-graphql'
 import { VerificationTokenModel } from './verificationTokenModel'
 
 @Entity({ name: 'users' })
 @ObjectType('User', {})
 export class UserModel extends BaseEntity {
-    @PrimaryGeneratedColumn({ name: '_id' })
+    @PrimaryGeneratedColumn('uuid')
     @Field(() => ID)
-      id!: ObjectID
+      id!: string
 
     @Field(() => String)
     @Column({ nullable: true })
@@ -23,4 +30,11 @@ export class UserModel extends BaseEntity {
 
     @OneToMany(() => VerificationTokenModel, (token) => token.user)
       verificationTokens!: VerificationTokenModel[]
+
+    @AfterLoad()
+    async nullChecks () {
+      if (!this.verificationTokens) {
+        this.verificationTokens = []
+      }
+    }
 }

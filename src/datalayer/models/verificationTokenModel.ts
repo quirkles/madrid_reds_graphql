@@ -1,13 +1,13 @@
-import {Entity, PrimaryGeneratedColumn, Column, ObjectID, BaseEntity, ManyToOne} from 'typeorm'
+import { Entity, Column, BaseEntity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { Field, ID, ObjectType } from 'type-graphql'
-import {UserModel} from "./userModel";
+import { UserModel } from './userModel'
 
 @Entity({ name: 'verification_tokens' })
 @ObjectType('VerificationToken', {})
 export class VerificationTokenModel extends BaseEntity {
-    @PrimaryGeneratedColumn({ name: '_id' })
+    @PrimaryGeneratedColumn('uuid')
     @Field(() => ID)
-      id!: ObjectID
+      id!: string
 
     @Field(() => String)
     @Column({ nullable: false })
@@ -15,11 +15,23 @@ export class VerificationTokenModel extends BaseEntity {
 
     @Field(() => String)
     @Column({ nullable: false })
-      iv!: string
+      initializationVector!: string
 
     @Field(() => String)
     @Column({ nullable: false })
       token!: string
+
+    @Field(() => String)
+    @Column({ nullable: false })
+      secret!: string
+
+    @Field(() => Number)
+    @Column({ nullable: false })
+      createdAt!: number
+
+    @Field(() => Date)
+    @Column({ nullable: true })
+      verifiedAt!: Date
 
     @ManyToOne(() => UserModel, (user) => user.verificationTokens)
       user!: UserModel

@@ -21,6 +21,14 @@ container.bind<UserResolver>(UserResolver).to(UserResolver).inSingletonScope()
 // Services
 container.bind<IMailerService>(TYPES.MailerService).to(MailerService)
 
+// Constants
+container.bind<IAppConfig>(TYPES.appConfig).toConstantValue(appConfig)
+
+const sharedCryptoService = new CryptoService(appConfig) // we use a shared instance so we can generate an iv each time
+container.bind<ICryptoService>(TYPES.cryptoService).toConstantValue(sharedCryptoService)
+
+container.bind<DataSource>(TYPES.dataSource).toConstantValue(AppDataSource)
+
 // Factories
 container.bind<Factory<IUserRepository>>(TYPES.UserRepositoryFactory).toFactory<IUserRepository>((context: interfaces.Context) => {
   return () => {
@@ -30,15 +38,8 @@ container.bind<Factory<IUserRepository>>(TYPES.UserRepositoryFactory).toFactory<
 
 container.bind<Factory<IVerificationTokenRepository>>(TYPES.VerificationTokenFactory).toFactory<IVerificationTokenRepository>((context: interfaces.Context) => {
   return () => {
-    return verificationTokenRepositoryFactory(context.container.get(TYPES.dataSource))
+    return verificationTokenRepositoryFactory(context.container.get(TYPES.dataSource), sharedCryptoService)
   }
 })
 
-// Constants
-container.bind<IAppConfig>(TYPES.appConfig).toConstantValue(appConfig)
-
-const sharedCryptoService = new CryptoService(appConfig) // we use a shared instance so we can generate an iv each time
-container.bind<ICryptoService>(TYPES.cryptoService).toConstantValue(sharedCryptoService)
-
-container.bind<DataSource>(TYPES.dataSource).toConstantValue(AppDataSource)
 export { container, TYPES }
