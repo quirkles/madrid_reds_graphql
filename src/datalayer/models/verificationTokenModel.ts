@@ -15,10 +15,6 @@ export class VerificationTokenModel extends BaseEntity {
 
     @Field(() => String)
     @Column({ nullable: false })
-      initializationVector!: string
-
-    @Field(() => String)
-    @Column({ nullable: false })
       token!: string
 
     @Field(() => String)

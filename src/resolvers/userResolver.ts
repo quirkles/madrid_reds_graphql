@@ -35,11 +35,11 @@ export class UserResolver {
         this.logger.info(`Creating user with email: ${emailAddress}`)
       }
       this.logger.debug('user', { user })
-      const verificationToken = await verificationTokenRepo.createToken(emailAddress)
+      const { verificationToken, initializationVector } = await verificationTokenRepo.createToken(emailAddress)
       await verificationToken.save()
       user.verificationTokens.push(verificationToken)
       await user.save()
-      await this.mailer.sendConfirmEmail(emailAddress, verificationToken.token, verificationToken.initializationVector)
+      await this.mailer.sendConfirmEmail(emailAddress, verificationToken.token, initializationVector)
       return true
     } catch (err) {
       this.logger.error('Failed to send email', { error: (err as Error).message })
