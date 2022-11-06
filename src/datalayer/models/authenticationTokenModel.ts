@@ -2,9 +2,9 @@ import { Entity, Column, BaseEntity, ManyToOne, PrimaryGeneratedColumn } from 't
 import { Field, ID, ObjectType } from 'type-graphql'
 import { UserModel } from './userModel'
 
-@Entity({ name: 'verification_tokens' })
-@ObjectType('VerificationToken', {})
-export class VerificationTokenModel extends BaseEntity {
+@Entity({ name: 'authentication_tokens' })
+@ObjectType('AuthenticationToken', {})
+export class AuthenticationTokenModel extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => ID)
       id!: string
@@ -23,7 +23,7 @@ export class VerificationTokenModel extends BaseEntity {
 
     @Field(() => Number)
     @Column({ nullable: true })
-      verifiedAt!: number
+      authenticatedAt!: number
 
     @ManyToOne(() => UserModel, (user) => user.verificationTokens)
       user!: UserModel

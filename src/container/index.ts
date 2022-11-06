@@ -8,6 +8,8 @@ import { TYPES } from './types'
 import { AppDataSource } from '../datasource'
 import Factory = interfaces.Factory;
 import {
+  authenticationTokenRepositoryFactory,
+  IAuthenticationTokenRepository,
   IUserRepository,
   IVerificationTokenRepository,
   userRepositoryFactory,
@@ -30,6 +32,8 @@ container.bind<ICryptoService>(TYPES.cryptoService).toConstantValue(sharedCrypto
 container.bind<DataSource>(TYPES.dataSource).toConstantValue(AppDataSource)
 
 // Factories
+
+// These repositories are bound as factories because they require the data source to have been initialized, the factories return singleton instances
 container.bind<Factory<IUserRepository>>(TYPES.UserRepositoryFactory).toFactory<IUserRepository>((context: interfaces.Context) => {
   return () => {
     return userRepositoryFactory(context.container.get(TYPES.dataSource))
@@ -39,6 +43,12 @@ container.bind<Factory<IUserRepository>>(TYPES.UserRepositoryFactory).toFactory<
 container.bind<Factory<IVerificationTokenRepository>>(TYPES.VerificationTokenFactory).toFactory<IVerificationTokenRepository>((context: interfaces.Context) => {
   return () => {
     return verificationTokenRepositoryFactory(context.container.get(TYPES.dataSource), sharedCryptoService)
+  }
+})
+
+container.bind<Factory<IAuthenticationTokenRepository>>(TYPES.AuthenticationTokenFactory).toFactory<IAuthenticationTokenRepository>((context: interfaces.Context) => {
+  return () => {
+    return authenticationTokenRepositoryFactory(context.container.get(TYPES.dataSource), sharedCryptoService)
   }
 })
 

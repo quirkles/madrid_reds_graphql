@@ -6,6 +6,7 @@ const TYPES = {
   // Factories
   UserRepositoryFactory: 'UserRepositoryFactory',
   VerificationTokenFactory: 'VerificationTokenFactory',
+  AuthenticationTokenFactory: 'AuthenticationTokenFactory',
 
   // singleton class instances
   cryptoService: 'cryptoService',

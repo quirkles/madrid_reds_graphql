@@ -8,6 +8,7 @@ import { IAppConfig } from '../../config'
 
 export interface IMailerService {
   sendConfirmEmail(recipient: string, verificationToken: string, initializationVectorString: string): Promise<void>
+  sendLoginEmail(recipient: string, verificationToken: string, initializationVectorString: string): Promise<void>
 }
 
 @injectable()
@@ -18,6 +19,8 @@ export class MailerService implements IMailerService {
   private useEthereum = false
   private transporter?: Transporter
   private readonly sendgridApi!: string
+  private readonly mailtrapUser!: string
+  private readonly mailtrapPass!: string
   private readonly verifyEmailUrl!: string
 
   constructor (
@@ -25,21 +28,22 @@ export class MailerService implements IMailerService {
   ) {
     this.sendgridApi = appConfig.SENDGRID_API_KEY
     this.verifyEmailUrl = appConfig.VERIFY_EMAIL_URL
+    this.mailtrapUser = appConfig.MAILTRAP_USER
+    this.mailtrapPass = appConfig.MAILTRAP_PASS
     this.useEthereum = appConfig.env === 'local'
   }
 
   private async initTransport (): Promise<void> {
     if (this.useEthereum) {
-      this.logger.info('Using ethereum email')
+      this.logger.debug('Using ethereum email')
       try {
-        const testAccount = await createTestAccount()
+        this.logger.debug('Creating transport')
         this.transporter = createTransport({
-          host: 'smtp.ethereal.email',
-          port: 587,
-          secure: false, // true for 465, false for other ports
+          host: 'smtp.mailtrap.io',
+          port: 2525,
           auth: {
-            user: testAccount.user, // generated ethereal user
-            pass: testAccount.pass // generated ethereal password
+            user: this.mailtrapUser,
+            pass: this.mailtrapPass
           }
         })
       } catch (error) {
@@ -53,7 +57,9 @@ export class MailerService implements IMailerService {
 
   private async sendMail (recipient: string, subject: string, content: string, htmlContent: string): Promise<void> {
     if (!this.transporter) {
+      this.logger.debug('Initializing transport')
       await this.initTransport()
+      this.logger.debug('Initialize transport complete')
     }
 
     if (!this.transporter) {
@@ -87,6 +93,18 @@ export class MailerService implements IMailerService {
     <p>We need to confirm your email address.</p>
     <a href="${confirmUrl}?iv=${ivString}&verificationToken=${verificationToken}">Click to confirm your email address</a>
     <p>Heres some after text</p>
+</div>`
+    return this.sendMail(recipient, 'Confirm your email address', 'Click on this link: http://google.com', html)
+  }
+
+  sendLoginEmail (recipient: string, verificationToken: string, initializationVectorString: string): Promise<void> {
+    const confirmUrl = `${this.verifyEmailUrl}`
+    const html = `
+<h1>Hi!</h1>
+<h2>Welcome to madrid reds!</h2>
+<div>
+    <p>You requested a login to madrid reds.</p>
+    <a href="${confirmUrl}?iv=${initializationVectorString}&verificationToken=${verificationToken}">Click here to login on this device</a>
 </div>`
     return this.sendMail(recipient, 'Confirm your email address', 'Click on this link: http://google.com', html)
   }

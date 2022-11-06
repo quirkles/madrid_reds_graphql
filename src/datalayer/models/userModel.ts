@@ -8,6 +8,7 @@ import {
 } from 'typeorm'
 import { Field, ID, ObjectType } from 'type-graphql'
 import { VerificationTokenModel } from './verificationTokenModel'
+import { AuthenticationTokenModel } from './authenticationTokenModel'
 
 @Entity({ name: 'users' })
 @ObjectType('User', {})
@@ -31,10 +32,16 @@ export class UserModel extends BaseEntity {
     @OneToMany(() => VerificationTokenModel, (token) => token.user)
       verificationTokens!: VerificationTokenModel[]
 
+    @OneToMany(() => AuthenticationTokenModel, (token) => token.user)
+      authenticationTokens!: AuthenticationTokenModel[]
+
     @AfterLoad()
     async nullChecks () {
       if (!this.verificationTokens) {
         this.verificationTokens = []
+      }
+      if (!this.authenticationTokens) {
+        this.authenticationTokens = []
       }
     }
 }

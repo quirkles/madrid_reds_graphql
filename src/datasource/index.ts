@@ -3,7 +3,7 @@ import {
 } from 'path'
 import { DataSource, DataSourceOptions } from 'typeorm'
 import { appConfig } from '../config'
-import { UserModel, VerificationTokenModel } from '../datalayer'
+import {AuthenticationTokenModel, UserModel, VerificationTokenModel} from '../datalayer'
 
 const {
   DATABASE_USERNAME,
@@ -13,7 +13,7 @@ const {
 } = appConfig
 
 const connectionOptionEntities: Pick<DataSourceOptions, 'entities'> = {
-  entities: [UserModel, VerificationTokenModel]
+  entities: [UserModel, VerificationTokenModel, AuthenticationTokenModel]
 }
 
 let connectionOptions: DataSourceOptions

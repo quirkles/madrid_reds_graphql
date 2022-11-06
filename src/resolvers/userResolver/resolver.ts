@@ -4,7 +4,7 @@ import { Logger } from 'winston'
 
 import { AppContext } from '../../context'
 import { ICryptoService, IMailerService } from '../../services'
-import { IUserRepository, IVerificationTokenRepository } from '../../datalayer'
+import {IAuthenticationTokenRepository, IUserRepository, IVerificationTokenRepository, UserModel} from '../../datalayer'
 import { VerifyTokenResponse } from './responseTypes'
 
 @Resolver()
@@ -23,13 +23,16 @@ export class UserResolver {
   private userRepositoryFactory!: () => IUserRepository
 
   @inject('VerificationTokenFactory')
-  private verificationTokenFactory!: () => IVerificationTokenRepository
+  private verificationTokenRepositoryFactory!: () => IVerificationTokenRepository
+
+  @inject('AuthenticationTokenFactory')
+  private authenticationTokenRepositoryFactory!: () => IAuthenticationTokenRepository
 
   @Mutation(() => Boolean)
   async signUp (@Arg('emailAddress') emailAddress: string, @Ctx() ctx: AppContext): Promise<boolean> {
     try {
       const userRepo = this.userRepositoryFactory()
-      const verificationTokenRepo = this.verificationTokenFactory()
+      const verificationTokenRepo = this.verificationTokenRepositoryFactory()
       let user = await userRepo.findOne({ where: { email: emailAddress }, relations: { verificationTokens: true } })
       if (user) {
         this.logger.info('User already exists')
@@ -39,11 +42,30 @@ export class UserResolver {
         this.logger.info(`Creating user with email: ${emailAddress}`)
       }
       this.logger.debug('user', { user })
-      const { verificationToken, initializationVector } = await verificationTokenRepo.createToken(emailAddress)
+      const { verificationToken, initializationVector, token } = await verificationTokenRepo.createToken(emailAddress)
       await verificationToken.save()
       user.verificationTokens.push(verificationToken)
       await user.save()
-      await this.mailer.sendConfirmEmail(emailAddress, verificationToken.token, initializationVector)
+      await this.mailer.sendConfirmEmail(emailAddress, token, initializationVector)
+      return true
+    } catch (err) {
+      this.logger.error('Failed to send email', { error: (err as Error).message })
+      return false
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async sendLoginLink (@Arg('emailAddress') emailAddress: string, @Ctx() ctx: AppContext): Promise<boolean> {
+    try {
+      const userRepo = this.userRepositoryFactory()
+      const authenticationTokenRepository = this.authenticationTokenRepositoryFactory()
+      const user = await userRepo.findOne({ where: { email: emailAddress }, relations: { verificationTokens: true } })
+      if (!user) {
+        this.logger.info('No user exists for this email')
+        return false
+      }
+      const { initializationVector, token } = await authenticationTokenRepository.createTokenForUser(user)
+      await this.mailer.sendConfirmEmail(emailAddress, token, initializationVector)
       return true
     } catch (err) {
       this.logger.error('Failed to send email', { error: (err as Error).message })
@@ -54,7 +76,7 @@ export class UserResolver {
   @Mutation(() => VerifyTokenResponse)
   async verifyToken (@Arg('emailAddress') emailAddress: string, @Arg('secret') secret: string, @Ctx() ctx: AppContext): Promise<VerifyTokenResponse> {
     try {
-      const verificationTokenRepo = this.verificationTokenFactory()
+      const verificationTokenRepo = this.verificationTokenRepositoryFactory()
 
       const verificationToken = await verificationTokenRepo.findOne({
         where: {

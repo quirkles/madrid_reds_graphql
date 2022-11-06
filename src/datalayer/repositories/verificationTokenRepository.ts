@@ -3,7 +3,7 @@ import { VerificationTokenModel } from '../models'
 import { ICryptoService } from '../../services'
 
 export type IVerificationTokenRepository = Repository<VerificationTokenModel> & {
-  createToken(email: string): Promise<{verificationToken: VerificationTokenModel, initializationVector: string}>
+  createToken(email: string): Promise<{verificationToken: VerificationTokenModel, initializationVector: string, token: string}>
   verifyUserWithToken(token: VerificationTokenModel): Promise<VerificationTokenModel>
 }
 
@@ -12,7 +12,7 @@ let repoSingleton: IVerificationTokenRepository
 export function verificationTokenRepositoryFactory (datasource: DataSource, cryptoService: ICryptoService): IVerificationTokenRepository {
   if (!repoSingleton) {
     repoSingleton = datasource.getRepository<VerificationTokenModel>(VerificationTokenModel).extend({
-      async createToken (email: string): Promise<{verificationToken: VerificationTokenModel, initializationVector: string}> {
+      async createToken (email: string): Promise<{verificationToken: VerificationTokenModel, initializationVector: string, token: string}> {
         const secret = cryptoService.generateSecret()
         const tokenString = JSON.stringify({
           email,
@@ -28,10 +28,10 @@ export function verificationTokenRepositoryFactory (datasource: DataSource, cryp
           verificationToken: this.create({
             email,
             secret,
-            createdAt: Date.now(),
-            token: result
+            createdAt: Date.now()
           }),
-          initializationVector: initializationVector.toString('hex')
+          initializationVector: initializationVector.toString('hex'),
+          token: result
         }
       },
 
