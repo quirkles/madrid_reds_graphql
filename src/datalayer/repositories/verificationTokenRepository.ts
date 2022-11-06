@@ -4,6 +4,7 @@ import { ICryptoService } from '../../services'
 
 export type IVerificationTokenRepository = Repository<VerificationTokenModel> & {
   createToken(email: string): Promise<{verificationToken: VerificationTokenModel, initializationVector: string}>
+  verifyUserWithToken(token: VerificationTokenModel): Promise<VerificationTokenModel>
 }
 
 let repoSingleton: IVerificationTokenRepository
@@ -32,6 +33,13 @@ export function verificationTokenRepositoryFactory (datasource: DataSource, cryp
           }),
           initializationVector: initializationVector.toString('hex')
         }
+      },
+
+      async verifyUserWithToken (token: VerificationTokenModel): Promise<VerificationTokenModel> {
+        token.verifiedAt = Date.now()
+        token.user.isVerified = true
+        await token.user.save()
+        return this.save(token)
       }
     })
   }

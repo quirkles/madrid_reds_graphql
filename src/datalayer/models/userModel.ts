@@ -17,7 +17,7 @@ export class UserModel extends BaseEntity {
       id!: string
 
     @Field(() => String)
-    @Column({ nullable: true })
+    @Column({ nullable: true, unique: true })
       email!: string
 
     @Field(() => String)

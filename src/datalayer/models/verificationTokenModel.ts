@@ -25,9 +25,9 @@ export class VerificationTokenModel extends BaseEntity {
     @Column({ nullable: false })
       createdAt!: number
 
-    @Field(() => Date)
+    @Field(() => Number)
     @Column({ nullable: true })
-      verifiedAt!: Date
+      verifiedAt!: number
 
     @ManyToOne(() => UserModel, (user) => user.verificationTokens)
       user!: UserModel
