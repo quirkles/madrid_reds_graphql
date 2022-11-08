@@ -1,41 +1,39 @@
+import { join } from "path";
+import { DataSource, DataSourceOptions } from "typeorm";
+import { appConfig } from "../config";
 import {
-  join
-} from 'path'
-import { DataSource, DataSourceOptions } from 'typeorm'
-import { appConfig } from '../config'
-import {AuthenticationTokenModel, UserModel, VerificationTokenModel} from '../datalayer'
+  AuthenticationTokenModel,
+  UserModel,
+  VerificationTokenModel,
+} from "../datalayer";
 
-const {
-  DATABASE_USERNAME,
-  DATABASE_PASSWORD,
-  DATABASE_HOST,
-  DATABASE_NAME
-} = appConfig
+const { DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_NAME } =
+  appConfig;
 
-const connectionOptionEntities: Pick<DataSourceOptions, 'entities'> = {
-  entities: [UserModel, VerificationTokenModel, AuthenticationTokenModel]
-}
+const connectionOptionEntities: Pick<DataSourceOptions, "entities"> = {
+  entities: [UserModel, VerificationTokenModel, AuthenticationTokenModel],
+};
 
-let connectionOptions: DataSourceOptions
+let connectionOptions: DataSourceOptions;
 
-if (appConfig.env === 'local') {
+if (appConfig.env === "local") {
   connectionOptions = {
-    type: 'sqlite',
+    type: "sqlite",
     synchronize: true,
-    database: join(__dirname, '../..', 'myDb.db'),
-    ...connectionOptionEntities
-  }
+    database: join(__dirname, "../..", "myDb.db"),
+    ...connectionOptionEntities,
+  };
 } else {
   connectionOptions = {
-    type: 'postgres',
+    type: "postgres",
     database: DATABASE_NAME,
     username: DATABASE_USERNAME,
     password: DATABASE_PASSWORD,
     host: DATABASE_HOST,
     port: 27017,
     ssl: true,
-    ...connectionOptionEntities
-  }
+    ...connectionOptionEntities,
+  };
 }
 
-export const AppDataSource = new DataSource(connectionOptions)
+export const AppDataSource = new DataSource(connectionOptions);

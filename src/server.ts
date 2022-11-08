@@ -1,48 +1,50 @@
-import 'reflect-metadata'
+import "reflect-metadata";
 
-import { v4 } from 'uuid'
-import { ApolloServer } from 'apollo-server'
-import { buildSchema, ResolverData } from 'type-graphql'
+import { v4 } from "uuid";
+import { ApolloServer } from "apollo-server";
+import { buildSchema, ResolverData } from "type-graphql";
 
-import { container } from './container'
+import { container } from "./container";
 
-import { appConfig } from './config'
-import { AppDataSource } from './datasource'
-import { UserResolver } from './resolvers'
-import { AppContext, createContextFunction } from './context'
-import { createLogger } from './logger'
+import { appConfig } from "./config";
+import { AppDataSource } from "./datasource";
+import { UserResolver } from "./resolvers";
+import { AppContext, createContextFunction } from "./context";
+import { createLogger } from "./logger";
 
-export async function startServer () {
+export async function startServer() {
   try {
-    await AppDataSource.initialize()
+    await AppDataSource.initialize();
   } catch (e) {
-    throw new Error(`Failed to connect to data source: ${(e as Error).message}`)
+    throw new Error(
+      `Failed to connect to data source: ${(e as Error).message}`
+    );
   }
 
-  const logger = createLogger({ executionId: v4() })
+  const logger = createLogger({ executionId: v4() });
 
   const schema = await buildSchema({
     container: ({ context }: ResolverData<AppContext>) => context.container,
-    resolvers: [UserResolver]
-  })
+    resolvers: [UserResolver],
+  });
 
   const server = new ApolloServer({
     schema,
     context: createContextFunction(logger),
     plugins: [
       {
-        async requestDidStart () {
+        async requestDidStart() {
           return {
-            async willSendResponse (requestContext) {
+            async willSendResponse(requestContext) {
               // remember to dispose the scoped container to prevent memory leaks
-              requestContext.context.container.unbindAll()
-            }
-          }
-        }
-      }
-    ]
-  })
+              requestContext.context.container.unbindAll();
+            },
+          };
+        },
+      },
+    ],
+  });
 
-  const { url } = await server.listen(appConfig.PORT)
-  logger.info(`Server listening at: ${url}`)
+  const { url } = await server.listen(appConfig.PORT);
+  logger.info(`Server listening at: ${url}`);
 }
