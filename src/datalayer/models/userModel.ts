@@ -9,8 +9,9 @@ import {
 import { Field, ID, ObjectType } from "type-graphql";
 import { VerificationTokenModel } from "./verificationTokenModel";
 import { AuthenticationTokenModel } from "./authenticationTokenModel";
+import { UserToTeamModel } from "./userToTeamModel";
 
-@Entity({ name: "users" })
+@Entity({ name: "user" })
 @ObjectType("User", {})
 export class UserModel extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
@@ -35,6 +36,9 @@ export class UserModel extends BaseEntity {
   @OneToMany(() => AuthenticationTokenModel, (token) => token.user)
   authenticationTokens!: AuthenticationTokenModel[];
 
+  @OneToMany(() => UserToTeamModel, (userToTeam) => userToTeam.user)
+  userToTeams!: UserToTeamModel[];
+
   @AfterLoad()
   async nullChecks() {
     if (!this.verificationTokens) {
@@ -42,6 +46,9 @@ export class UserModel extends BaseEntity {
     }
     if (!this.authenticationTokens) {
       this.authenticationTokens = [];
+    }
+    if (!this.userToTeams) {
+      this.userToTeams = [];
     }
   }
 }

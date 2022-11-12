@@ -10,7 +10,7 @@ import {
 import { UserResolver } from "../resolvers";
 import { appConfig, IAppConfig } from "../config";
 import { TYPES } from "./types";
-import { AppDataSource } from "../datasource";
+import { AppDataSource } from "../datalayer/datasource";
 import Factory = interfaces.Factory;
 import {
   authenticationTokenRepositoryFactory,

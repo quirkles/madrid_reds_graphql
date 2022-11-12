@@ -7,7 +7,7 @@ import { buildSchema, ResolverData } from "type-graphql";
 import { container } from "./container";
 
 import { appConfig } from "./config";
-import { AppDataSource } from "./datasource";
+import { AppDataSource } from "./datalayer/datasource";
 import { UserResolver } from "./resolvers";
 import { AppContext, createContextFunction } from "./context";
 import { createLogger } from "./logger";

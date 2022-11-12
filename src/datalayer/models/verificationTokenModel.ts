@@ -8,7 +8,7 @@ import {
 import { Field, ID, ObjectType } from "type-graphql";
 import { UserModel } from "./userModel";
 
-@Entity({ name: "verification_tokens" })
+@Entity({ name: "verification_token" })
 @ObjectType("VerificationToken", {})
 export class VerificationTokenModel extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")

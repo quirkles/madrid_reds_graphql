@@ -1,17 +1,25 @@
 import { join } from "path";
 import { DataSource, DataSourceOptions } from "typeorm";
-import { appConfig } from "../config";
+import { appConfig } from "../../config";
 import {
   AuthenticationTokenModel,
+  TeamModel,
   UserModel,
+  UserToTeamModel,
   VerificationTokenModel,
-} from "../datalayer";
+} from "../index";
 
 const { DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_NAME } =
   appConfig;
 
 const connectionOptionEntities: Pick<DataSourceOptions, "entities"> = {
-  entities: [UserModel, VerificationTokenModel, AuthenticationTokenModel],
+  entities: [
+    UserModel,
+    TeamModel,
+    UserToTeamModel,
+    VerificationTokenModel,
+    AuthenticationTokenModel,
+  ],
 };
 
 let connectionOptions: DataSourceOptions;
@@ -20,7 +28,8 @@ if (appConfig.env === "local") {
   connectionOptions = {
     type: "sqlite",
     synchronize: true,
-    database: join(__dirname, "../..", "myDb.db"),
+    logging: true,
+    database: join(__dirname, "../../../", "myDb.db"),
     ...connectionOptionEntities,
   };
 } else {
