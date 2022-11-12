@@ -7,7 +7,7 @@ import {
   IMailerService,
   MailerService,
 } from "../services";
-import { UserResolver } from "../resolvers";
+import { UserResolver, TeamResolver } from "../resolvers";
 import { appConfig, IAppConfig } from "../config";
 import { TYPES } from "./types";
 import { AppDataSource } from "../datalayer/datasource";
@@ -15,15 +15,23 @@ import Factory = interfaces.Factory;
 import {
   authenticationTokenRepositoryFactory,
   IAuthenticationTokenRepository,
+  ITeamRepository,
   IUserRepository,
   IVerificationTokenRepository,
+  teamRepositoryFactory,
   userRepositoryFactory,
   verificationTokenRepositoryFactory,
 } from "../datalayer";
+import { TeamPlayerResolver } from "../resolvers/teamPlayerResolver/resolver";
 
 const container = new Container({ skipBaseClassChecks: true });
 // Resolvers
 container.bind<UserResolver>(UserResolver).to(UserResolver).inSingletonScope();
+container.bind<TeamResolver>(TeamResolver).to(TeamResolver).inSingletonScope();
+container
+  .bind<TeamPlayerResolver>(TeamPlayerResolver)
+  .to(TeamPlayerResolver)
+  .inSingletonScope();
 
 // Services
 container.bind<IMailerService>(TYPES.MailerService).to(MailerService);
@@ -41,6 +49,14 @@ container.bind<DataSource>(TYPES.dataSource).toConstantValue(AppDataSource);
 // Factories
 
 // These repositories are bound as factories because they require the data source to have been initialized, the factories return singleton instances
+container
+  .bind<Factory<ITeamRepository>>(TYPES.TeamRepositoryFactory)
+  .toFactory<ITeamRepository>((context: interfaces.Context) => {
+    return () => {
+      return teamRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
 container
   .bind<Factory<IUserRepository>>(TYPES.UserRepositoryFactory)
   .toFactory<IUserRepository>((context: interfaces.Context) => {

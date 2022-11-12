@@ -7,10 +7,11 @@ import {
   IAuthenticationTokenRepository,
   IUserRepository,
   IVerificationTokenRepository,
+  UserModel,
 } from "../../datalayer";
 import { AuthenticationResponse, VerifyTokenResponse } from "./responseTypes";
 
-@Resolver()
+@Resolver(() => UserModel)
 @injectable()
 export class UserResolver {
   @inject("MailerService")
