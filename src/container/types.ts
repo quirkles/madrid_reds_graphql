@@ -6,6 +6,7 @@ const TYPES = {
   // Factories
   UserRepositoryFactory: "UserRepositoryFactory",
   TeamRepositoryFactory: "TeamRepositoryFactory",
+  UserToTeamRepositoryFactory: "UserToTeamRepositoryFactory",
   VerificationTokenFactory: "VerificationTokenFactory",
   AuthenticationTokenFactory: "AuthenticationTokenFactory",
 

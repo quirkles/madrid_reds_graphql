@@ -22,12 +22,6 @@ export class TeamModel extends BaseEntity {
   name!: string;
 
   @OneToMany(() => UserToTeamModel, (userToTeam) => userToTeam.team)
+  @Field(() => [UserToTeamModel], { name: "players" })
   userToTeams!: UserToTeamModel[];
-
-  @AfterLoad()
-  async nullChecks() {
-    if (!this.userToTeams) {
-      this.userToTeams = [];
-    }
-  }
 }

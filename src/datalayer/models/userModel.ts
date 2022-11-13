@@ -36,19 +36,20 @@ export class UserModel extends BaseEntity {
   @OneToMany(() => AuthenticationTokenModel, (token) => token.user)
   authenticationTokens!: AuthenticationTokenModel[];
 
+  @Field(() => [UserToTeamModel], { name: "teamsPlayerIsOn" })
   @OneToMany(() => UserToTeamModel, (userToTeam) => userToTeam.user)
   userToTeams!: UserToTeamModel[];
 
-  @AfterLoad()
-  async nullChecks() {
-    if (!this.verificationTokens) {
-      this.verificationTokens = [];
-    }
-    if (!this.authenticationTokens) {
-      this.authenticationTokens = [];
-    }
-    if (!this.userToTeams) {
-      this.userToTeams = [];
-    }
-  }
+  // @AfterLoad()
+  // async nullChecks() {
+  //   if (!this.verificationTokens) {
+  //     this.verificationTokens = [];
+  //   }
+  //   if (!this.authenticationTokens) {
+  //     this.authenticationTokens = [];
+  //   }
+  //   if (!this.userToTeams) {
+  //     this.userToTeams = [];
+  //   }
+  // }
 }

@@ -13,8 +13,9 @@ import { TeamModel } from "./teamModel";
 @ObjectType("TeamPlayer", {})
 export class UserToTeamModel extends BaseEntity {
   @PrimaryGeneratedColumn()
-  public id!: number;
+  public id!: string;
 
+  @Field(() => String)
   @Column()
   public position!: string;
 

@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Arg } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Arg,
+  FieldResolver,
+  ResolverInterface,
+  Root,
+} from "type-graphql";
 import { inject, injectable } from "inversify";
 import { Logger } from "winston";
 
@@ -6,14 +14,16 @@ import { ICryptoService, IMailerService } from "../../services";
 import {
   IAuthenticationTokenRepository,
   IUserRepository,
+  IUserToTeamRepository,
   IVerificationTokenRepository,
   UserModel,
+  UserToTeamModel,
 } from "../../datalayer";
 import { AuthenticationResponse, VerifyTokenResponse } from "./responseTypes";
 
 @Resolver(() => UserModel)
 @injectable()
-export class UserResolver {
+export class UserResolver implements ResolverInterface<UserModel> {
   @inject("MailerService")
   private mailer!: IMailerService;
 
@@ -25,6 +35,9 @@ export class UserResolver {
 
   @inject("UserRepositoryFactory")
   private userRepositoryFactory!: () => IUserRepository;
+
+  @inject("UserToTeamRepositoryFactory")
+  private userToTeamRepositoryFactory!: () => IUserToTeamRepository;
 
   @inject("VerificationTokenFactory")
   private verificationTokenRepositoryFactory!: () => IVerificationTokenRepository;
@@ -250,12 +263,13 @@ export class UserResolver {
     }
   }
 
-  @Query(() => String)
-  async test(@Arg("input") input: string) {
-    this.logger.info(`test before ${input}`);
-    await this.mailer.sendConfirmEmail("al.quirk@gmail.com", "", "");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    this.logger.info(`test after ${input}`);
-    return input;
+  @FieldResolver(() => [UserToTeamModel], { name: "teamsPlayerIsOn" })
+  async userToTeams(@Root() user: UserModel): Promise<UserToTeamModel[]> {
+    const repo = this.userToTeamRepositoryFactory();
+    return repo.find({
+      where: {
+        userId: user.id,
+      },
+    });
   }
 }

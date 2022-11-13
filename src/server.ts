@@ -11,7 +11,7 @@ import { AppDataSource } from "./datalayer/datasource";
 import { TeamResolver, UserResolver } from "./resolvers";
 import { AppContext, createContextFunction } from "./context";
 import { createLogger } from "./logger";
-import { UserToTeamModel } from "./datalayer";
+import { TeamPlayerResolver } from "./resolvers/teamPlayerResolver/resolver";
 
 export async function startServer() {
   try {
@@ -26,7 +26,7 @@ export async function startServer() {
 
   const schema = await buildSchema({
     container: ({ context }: ResolverData<AppContext>) => context.container,
-    resolvers: [UserResolver, TeamResolver, UserToTeamModel],
+    resolvers: [UserResolver, TeamResolver, TeamPlayerResolver],
   });
 
   const server = new ApolloServer({

@@ -23,6 +23,10 @@ import {
   verificationTokenRepositoryFactory,
 } from "../datalayer";
 import { TeamPlayerResolver } from "../resolvers/teamPlayerResolver/resolver";
+import {
+  IUserToTeamRepository,
+  userToTeamRepositoryFactory,
+} from "../datalayer/repositories/userToTeamRepository";
 
 const container = new Container({ skipBaseClassChecks: true });
 // Resolvers
@@ -62,6 +66,16 @@ container
   .toFactory<IUserRepository>((context: interfaces.Context) => {
     return () => {
       return userRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
+container
+  .bind<Factory<IUserToTeamRepository>>(TYPES.UserToTeamRepositoryFactory)
+  .toFactory<IUserToTeamRepository>((context: interfaces.Context) => {
+    return () => {
+      return userToTeamRepositoryFactory(
+        context.container.get(TYPES.dataSource)
+      );
     };
   });
 
