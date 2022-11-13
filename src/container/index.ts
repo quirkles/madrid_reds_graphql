@@ -1,32 +1,31 @@
 import { Container, interfaces } from "inversify";
 import { DataSource } from "typeorm";
 
+import { TYPES } from "./types";
 import {
   ICryptoService,
   CryptoService,
   IMailerService,
   MailerService,
+  CustomAuthChecker,
+  IAuthChecker,
 } from "../services";
-import { UserResolver, TeamResolver } from "../resolvers";
+import { UserResolver, TeamResolver, TeamPlayerResolver } from "../resolvers";
 import { appConfig, IAppConfig } from "../config";
-import { TYPES } from "./types";
-import { AppDataSource } from "../datalayer/datasource";
-import Factory = interfaces.Factory;
 import {
+  AppDataSource,
   authenticationTokenRepositoryFactory,
   IAuthenticationTokenRepository,
   ITeamRepository,
   IUserRepository,
   IVerificationTokenRepository,
+  IUserToTeamRepository,
   teamRepositoryFactory,
   userRepositoryFactory,
   verificationTokenRepositoryFactory,
-} from "../datalayer";
-import { TeamPlayerResolver } from "../resolvers/teamPlayerResolver/resolver";
-import {
-  IUserToTeamRepository,
   userToTeamRepositoryFactory,
-} from "../datalayer/repositories/userToTeamRepository";
+} from "../datalayer";
+import { AppContext } from "../context";
 
 const container = new Container({ skipBaseClassChecks: true });
 // Resolvers
@@ -39,6 +38,7 @@ container
 
 // Services
 container.bind<IMailerService>(TYPES.MailerService).to(MailerService);
+container.bind<IAuthChecker>(TYPES.CustomAuthChecker).to(CustomAuthChecker);
 
 // Constants
 container.bind<IAppConfig>(TYPES.appConfig).toConstantValue(appConfig);
@@ -54,7 +54,7 @@ container.bind<DataSource>(TYPES.dataSource).toConstantValue(AppDataSource);
 
 // These repositories are bound as factories because they require the data source to have been initialized, the factories return singleton instances
 container
-  .bind<Factory<ITeamRepository>>(TYPES.TeamRepositoryFactory)
+  .bind<interfaces.Factory<ITeamRepository>>(TYPES.TeamRepositoryFactory)
   .toFactory<ITeamRepository>((context: interfaces.Context) => {
     return () => {
       return teamRepositoryFactory(context.container.get(TYPES.dataSource));
@@ -62,7 +62,7 @@ container
   });
 
 container
-  .bind<Factory<IUserRepository>>(TYPES.UserRepositoryFactory)
+  .bind<interfaces.Factory<IUserRepository>>(TYPES.UserRepositoryFactory)
   .toFactory<IUserRepository>((context: interfaces.Context) => {
     return () => {
       return userRepositoryFactory(context.container.get(TYPES.dataSource));
@@ -70,7 +70,9 @@ container
   });
 
 container
-  .bind<Factory<IUserToTeamRepository>>(TYPES.UserToTeamRepositoryFactory)
+  .bind<interfaces.Factory<IUserToTeamRepository>>(
+    TYPES.UserToTeamRepositoryFactory
+  )
   .toFactory<IUserToTeamRepository>((context: interfaces.Context) => {
     return () => {
       return userToTeamRepositoryFactory(
@@ -80,7 +82,9 @@ container
   });
 
 container
-  .bind<Factory<IVerificationTokenRepository>>(TYPES.VerificationTokenFactory)
+  .bind<interfaces.Factory<IVerificationTokenRepository>>(
+    TYPES.VerificationTokenFactory
+  )
   .toFactory<IVerificationTokenRepository>((context: interfaces.Context) => {
     return () => {
       return verificationTokenRepositoryFactory(
@@ -91,7 +95,7 @@ container
   });
 
 container
-  .bind<Factory<IAuthenticationTokenRepository>>(
+  .bind<interfaces.Factory<IAuthenticationTokenRepository>>(
     TYPES.AuthenticationTokenFactory
   )
   .toFactory<IAuthenticationTokenRepository>((context: interfaces.Context) => {

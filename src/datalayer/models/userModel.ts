@@ -3,13 +3,17 @@ import {
   Column,
   BaseEntity,
   OneToMany,
-  AfterLoad,
   PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
+
 import { VerificationTokenModel } from "./verificationTokenModel";
 import { AuthenticationTokenModel } from "./authenticationTokenModel";
 import { UserToTeamModel } from "./userToTeamModel";
+import { RoleModel } from "./roleModel";
+import { UserToRoleModel } from "./userToRoleModel";
 
 @Entity({ name: "user" })
 @ObjectType("User", {})
@@ -19,7 +23,7 @@ export class UserModel extends BaseEntity {
   id!: string;
 
   @Field(() => String)
-  @Column({ nullable: true, unique: true })
+  @Column({ nullable: false, unique: true })
   email!: string;
 
   @Field(() => String)
@@ -40,16 +44,7 @@ export class UserModel extends BaseEntity {
   @OneToMany(() => UserToTeamModel, (userToTeam) => userToTeam.user)
   userToTeams!: UserToTeamModel[];
 
-  // @AfterLoad()
-  // async nullChecks() {
-  //   if (!this.verificationTokens) {
-  //     this.verificationTokens = [];
-  //   }
-  //   if (!this.authenticationTokens) {
-  //     this.authenticationTokens = [];
-  //   }
-  //   if (!this.userToTeams) {
-  //     this.userToTeams = [];
-  //   }
-  // }
+  @Field(() => [UserToRoleModel], { name: "userRoles" })
+  @OneToMany(() => UserToRoleModel, (userToRole) => userToRole.user)
+  userRoles!: UserToRoleModel[];
 }

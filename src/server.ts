@@ -4,14 +4,15 @@ import { v4 } from "uuid";
 import { ApolloServer } from "apollo-server";
 import { buildSchema, ResolverData } from "type-graphql";
 
+// We need to import the container here because ot needs to be the first thing that happens, even though we dont actually need the container here
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { container } from "./container";
 
 import { appConfig } from "./config";
-import { AppDataSource } from "./datalayer/datasource";
-import { TeamResolver, UserResolver } from "./resolvers";
+import { AppDataSource } from "./datalayer";
+import { TeamResolver, UserResolver, TeamPlayerResolver } from "./resolvers";
 import { AppContext, createContextFunction } from "./context";
 import { createLogger } from "./logger";
-import { TeamPlayerResolver } from "./resolvers/teamPlayerResolver/resolver";
 
 export async function startServer() {
   try {

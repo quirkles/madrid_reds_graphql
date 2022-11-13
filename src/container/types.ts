@@ -2,6 +2,7 @@ const TYPES = {
   // classes
   UserResolver: "UserResolver",
   MailerService: "MailerService",
+  CustomAuthChecker: "CustomAuthChecker",
 
   // Factories
   UserRepositoryFactory: "UserRepositoryFactory",

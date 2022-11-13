@@ -1,5 +1,5 @@
 import * as crypto from "crypto";
-import { sign } from "jsonwebtoken";
+import { sign, verify, decode } from "jsonwebtoken";
 import { injectable } from "inversify";
 
 import { IAppConfig } from "../../config";
@@ -31,6 +31,8 @@ export interface ICryptoService {
   decrypt(params: DecryptionParams): Promise<string>;
   generateSecret(length?: number): string;
   signJwt(payload: JwtBody): string;
+  decryptJwt(token: string): JwtBody;
+  verifyAndDecryptJwt(token: string): Promise<JwtBody>;
 }
 
 @injectable()
@@ -118,6 +120,24 @@ class CryptoService implements ICryptoService {
 
   signJwt(payload: JwtBody): string {
     return sign(payload, this.jwtSecret);
+  }
+
+  decryptJwt(token: string): JwtBody {
+    const decoded = decode(token);
+    return decoded as JwtBody;
+  }
+
+  verifyAndDecryptJwt(token: string): Promise<JwtBody> {
+    return new Promise((resolve, reject) => {
+      verify(token, this.jwtSecret, (err, decoded) => {
+        if (err) {
+          return reject(
+            new Error(`Failed to verify and decrypt token: ${err.message}`)
+          );
+        }
+        return resolve(decoded as JwtBody);
+      });
+    });
   }
 }
 

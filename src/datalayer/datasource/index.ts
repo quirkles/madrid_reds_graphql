@@ -3,8 +3,10 @@ import { DataSource, DataSourceOptions } from "typeorm";
 import { appConfig } from "../../config";
 import {
   AuthenticationTokenModel,
+  RoleModel,
   TeamModel,
   UserModel,
+  UserToRoleModel,
   UserToTeamModel,
   VerificationTokenModel,
 } from "../index";
@@ -16,7 +18,9 @@ const connectionOptionEntities: Pick<DataSourceOptions, "entities"> = {
   entities: [
     UserModel,
     TeamModel,
+    RoleModel,
     UserToTeamModel,
+    UserToRoleModel,
     VerificationTokenModel,
     AuthenticationTokenModel,
   ],
