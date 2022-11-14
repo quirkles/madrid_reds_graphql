@@ -44,7 +44,7 @@ export class UserModel extends BaseEntity {
   @OneToMany(() => UserToTeamModel, (userToTeam) => userToTeam.user)
   userToTeams!: UserToTeamModel[];
 
-  @Field(() => [UserToRoleModel], { name: "userRoles" })
+  @Field(() => [UserToRoleModel], { name: "siteRoles" })
   @OneToMany(() => UserToRoleModel, (userToRole) => userToRole.user)
-  userRoles!: UserToRoleModel[];
+  siteRoles!: UserToRoleModel[];
 }

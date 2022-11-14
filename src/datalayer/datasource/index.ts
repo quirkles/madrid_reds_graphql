@@ -10,6 +10,8 @@ import {
   UserToTeamModel,
   VerificationTokenModel,
 } from "../index";
+import { UserToTeamToRoleModel } from "../models/userToTeamToRoleModel";
+import { RoleScopeModel } from "../models/roleScope";
 
 const { DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_NAME } =
   appConfig;
@@ -19,7 +21,9 @@ const connectionOptionEntities: Pick<DataSourceOptions, "entities"> = {
     UserModel,
     TeamModel,
     RoleModel,
+    RoleScopeModel,
     UserToTeamModel,
+    UserToTeamToRoleModel,
     UserToRoleModel,
     VerificationTokenModel,
     AuthenticationTokenModel,

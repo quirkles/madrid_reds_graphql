@@ -11,19 +11,31 @@ const USERS_TO_CREATE = 500;
 
 async function main() {
   await AppDataSource.initialize();
-  const roles =
-    (await Promise.all(
-      Object.values(RoleName).map((r) =>
-        RoleModel.create({ roleName: r }).save()
+  const roles = await RoleModel.find();
+
+  const createdRoles =
+    (
+      await Promise.all(
+        Object.values(RoleName).map((r) =>
+          RoleModel.create({ roleName: r })
+            .save()
+            .catch(() => null)
+        )
       )
-    )) || [];
+    ).filter(Boolean) || [];
   const users: UserModel[] = await Promise.all(
     Array.from({ length: USERS_TO_CREATE }).map(createRandomUser)
   );
 
-  const anyoneRole = roles.find((r) => r.roleName === RoleName.ANYONE);
-  const userRole = roles.find((r) => r.roleName === RoleName.USER);
-  const adminRole = roles.find((r) => r.roleName === RoleName.ADMIN);
+  const anyoneRole = [...roles, ...createdRoles].find(
+    (r) => r?.roleName === RoleName.ANYONE
+  );
+  const userRole = [...roles, ...createdRoles].find(
+    (r) => r?.roleName === RoleName.USER
+  );
+  const adminRole = [...roles, ...createdRoles].find(
+    (r) => r?.roleName === RoleName.ADMIN
+  );
 
   if (!anyoneRole || !userRole || !adminRole) {
     throw new Error("anyone, user and admin roles are required");

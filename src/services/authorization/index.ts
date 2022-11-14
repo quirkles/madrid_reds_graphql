@@ -2,20 +2,13 @@ import { AuthChecker, ResolverData } from "type-graphql";
 import { inject, injectable } from "inversify";
 import { intersection, difference } from "underscore";
 
-import { IUserRepository } from "../../datalayer";
+import { IUserRepository, RoleName } from "../../datalayer";
 import { AppContext } from "../../context";
 import { ICryptoService } from "../crypto";
 
 export interface IAuthChecker {
   check: AuthChecker<AppContext>;
 }
-
-export const RoleName = {
-  ANYONE: "ANYONE",
-  USER: "USER",
-  ADMIN: "ADMIN",
-} as const;
-export type Role = typeof RoleName[keyof typeof RoleName];
 
 @injectable()
 export class CustomAuthChecker implements IAuthChecker {
@@ -51,10 +44,10 @@ export class CustomAuthChecker implements IAuthChecker {
     const userRepo = this.userRepositoryFactory();
     const user = await userRepo.findOne({
       where: { email: decodedToken.email },
-      relations: ["userRoles", "userRoles.role"],
+      relations: ["siteRoles", "siteRoles.role"],
     });
 
-    const userRoles = user?.userRoles.map((r) => r.role.roleName) || [];
+    const userRoles = user?.siteRoles.map((r) => r.role.roleName) || [];
 
     const userRolesUniqueWithoutBasic = Array.from(
       new Set(difference(userRoles, [RoleName.ANYONE, RoleName.USER]))

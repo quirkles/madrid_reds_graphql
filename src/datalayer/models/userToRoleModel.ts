@@ -5,15 +5,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Field, ID, ObjectType, registerEnumType } from "type-graphql";
-import { RoleName } from "../../services";
+import { Field, ID, ObjectType } from "type-graphql";
 import { UserModel } from "./userModel";
 import { RoleModel } from "./roleModel";
-
-registerEnumType(RoleName, {
-  name: "RoleName", // this one is mandatory
-  description: "The roles a user can have", // this one is optional
-});
 
 @Entity({ name: "user_to_role" })
 @ObjectType("RoleForUser", {})
