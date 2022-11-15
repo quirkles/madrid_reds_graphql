@@ -4,17 +4,18 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   BaseEntity,
-  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
 import { UserModel } from "./userModel";
 import { TeamModel } from "./teamModel";
-import { UserToTeamToRoleModel } from "./userToTeamToRoleModel";
+import { RoleModel } from "./roleModel";
 
 @Entity({ name: "user_to_team" })
 @ObjectType("TeamPlayer", {})
 export class UserToTeamModel extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   public id!: string;
 
   @Field(() => String)
@@ -37,10 +38,8 @@ export class UserToTeamModel extends BaseEntity {
   @ManyToOne(() => TeamModel, (team) => team.userToTeams)
   public team!: TeamModel;
 
-  @Field(() => [UserToTeamToRoleModel])
-  @OneToMany(
-    () => UserToTeamToRoleModel,
-    (userTeamRole) => userTeamRole.userToTeamModel
-  )
-  userTeamRoles!: UserToTeamToRoleModel[];
+  @Field(() => [RoleModel])
+  @JoinTable()
+  @ManyToMany(() => RoleModel, (role) => role.teamPlayersWithRole)
+  roles!: RoleModel[];
 }

@@ -13,7 +13,6 @@ import { VerificationTokenModel } from "./verificationTokenModel";
 import { AuthenticationTokenModel } from "./authenticationTokenModel";
 import { UserToTeamModel } from "./userToTeamModel";
 import { RoleModel } from "./roleModel";
-import { UserToRoleModel } from "./userToRoleModel";
 
 @Entity({ name: "user" })
 @ObjectType("User", {})
@@ -44,7 +43,8 @@ export class UserModel extends BaseEntity {
   @OneToMany(() => UserToTeamModel, (userToTeam) => userToTeam.user)
   userToTeams!: UserToTeamModel[];
 
-  @Field(() => [UserToRoleModel], { name: "siteRoles" })
-  @OneToMany(() => UserToRoleModel, (userToRole) => userToRole.user)
-  siteRoles!: UserToRoleModel[];
+  @Field(() => [RoleModel], { name: "roles" })
+  @JoinTable()
+  @ManyToMany(() => RoleModel, (role) => role.usersWithRole)
+  roles!: RoleModel[];
 }

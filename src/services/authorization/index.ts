@@ -47,7 +47,7 @@ export class CustomAuthChecker implements IAuthChecker {
       relations: ["siteRoles", "siteRoles.role"],
     });
 
-    const userRoles = user?.siteRoles.map((r) => r.role.roleName) || [];
+    const userRoles = user?.roles.map((r) => r.roleName) || [];
 
     const userRolesUniqueWithoutBasic = Array.from(
       new Set(difference(userRoles, [RoleName.ANYONE, RoleName.USER]))

@@ -6,12 +6,10 @@ import {
   RoleModel,
   TeamModel,
   UserModel,
-  UserToRoleModel,
   UserToTeamModel,
   VerificationTokenModel,
 } from "../index";
-import { UserToTeamToRoleModel } from "../models/userToTeamToRoleModel";
-import { RoleScopeModel } from "../models/roleScope";
+import { RoleScopeModel } from "../models";
 
 const { DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_NAME } =
   appConfig;
@@ -23,8 +21,6 @@ const connectionOptionEntities: Pick<DataSourceOptions, "entities"> = {
     RoleModel,
     RoleScopeModel,
     UserToTeamModel,
-    UserToTeamToRoleModel,
-    UserToRoleModel,
     VerificationTokenModel,
     AuthenticationTokenModel,
   ],
@@ -36,7 +32,7 @@ if (appConfig.env === "local") {
   connectionOptions = {
     type: "sqlite",
     synchronize: true,
-    logging: true,
+    // logging: true,
     database: join(__dirname, "../../../", "myDb.db"),
     ...connectionOptionEntities,
   };

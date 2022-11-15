@@ -2,12 +2,10 @@ import {
   BaseEntity,
   Column,
   Entity,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Field, ID, ObjectType, registerEnumType } from "type-graphql";
-import { UserToRoleModel } from "./userToRoleModel";
 import { RoleModel } from "./roleModel";
 
 export const RoleScopeName = {
@@ -34,5 +32,5 @@ export class RoleScopeModel extends BaseEntity {
 
   @Field(() => [RoleModel], { name: "rolesInScope" })
   @OneToMany(() => RoleModel, (role) => role.scope)
-  roles!: UserToRoleModel[];
+  roles!: RoleModel[];
 }
