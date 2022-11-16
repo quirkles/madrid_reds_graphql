@@ -6,6 +6,7 @@ import {
   FieldResolver,
   ResolverInterface,
   Root,
+  Args,
 } from "type-graphql";
 import { inject, injectable } from "inversify";
 import { Logger } from "winston";
@@ -20,6 +21,7 @@ import {
   UserToTeamModel,
 } from "../../datalayer";
 import { AuthenticationResponse, VerifyTokenResponse } from "./responseTypes";
+import { FindUserArg } from "./inputTypes";
 
 @Resolver(() => UserModel)
 @injectable()
@@ -261,6 +263,19 @@ export class UserResolver implements ResolverInterface<UserModel> {
         authenticationError: (err as Error).message,
       };
     }
+  }
+
+  @Query(() => UserModel)
+  async user(@Args() findUserParams: FindUserArg): Promise<UserModel> {
+    const { userId, email } = findUserParams;
+    const userRepo = this.userRepositoryFactory();
+    if (userId) {
+      return userRepo.findOneOrFail({ where: { id: userId } });
+    }
+    if (email) {
+      return userRepo.findOneOrFail({ where: { email } });
+    }
+    throw new Error("Bad input");
   }
 
   @FieldResolver(() => [UserToTeamModel], { name: "teamsPlayerIsOn" })

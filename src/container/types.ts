@@ -10,6 +10,7 @@ const TYPES = {
   UserToTeamRepositoryFactory: "UserToTeamRepositoryFactory",
   VerificationTokenFactory: "VerificationTokenFactory",
   AuthenticationTokenFactory: "AuthenticationTokenFactory",
+  RoleRepositoryFactory: "RoleRepositoryFactory",
 
   // singleton class instances
   cryptoService: "cryptoService",

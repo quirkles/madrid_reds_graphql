@@ -20,12 +20,13 @@ import {
   IUserRepository,
   IVerificationTokenRepository,
   IUserToTeamRepository,
+  IRoleRepository,
   teamRepositoryFactory,
   userRepositoryFactory,
   verificationTokenRepositoryFactory,
   userToTeamRepositoryFactory,
+  roleRepositoryFactory,
 } from "../datalayer";
-import { AppContext } from "../context";
 
 const container = new Container({ skipBaseClassChecks: true });
 // Resolvers
@@ -66,6 +67,14 @@ container
   .toFactory<IUserRepository>((context: interfaces.Context) => {
     return () => {
       return userRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
+container
+  .bind<interfaces.Factory<IUserRepository>>(TYPES.RoleRepositoryFactory)
+  .toFactory<IRoleRepository>((context: interfaces.Context) => {
+    return () => {
+      return roleRepositoryFactory(context.container.get(TYPES.dataSource));
     };
   });
 
