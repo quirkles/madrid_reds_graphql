@@ -29,6 +29,14 @@ import {
 } from "../datalayer";
 
 const container = new Container({ skipBaseClassChecks: true });
+// Constants
+const sharedCryptoService = new CryptoService(appConfig); // we use a shared instance so we can generate an iv each time
+container
+  .bind<ICryptoService>(TYPES.cryptoService)
+  .toConstantValue(sharedCryptoService);
+container.bind<IAppConfig>(TYPES.appConfig).toConstantValue(appConfig);
+container.bind<DataSource>(TYPES.dataSource).toConstantValue(AppDataSource);
+
 // Resolvers
 container.bind<UserResolver>(UserResolver).to(UserResolver).inSingletonScope();
 container.bind<TeamResolver>(TeamResolver).to(TeamResolver).inSingletonScope();
@@ -40,16 +48,6 @@ container
 // Services
 container.bind<IMailerService>(TYPES.MailerService).to(MailerService);
 container.bind<IAuthChecker>(TYPES.CustomAuthChecker).to(CustomAuthChecker);
-
-// Constants
-container.bind<IAppConfig>(TYPES.appConfig).toConstantValue(appConfig);
-
-const sharedCryptoService = new CryptoService(appConfig); // we use a shared instance so we can generate an iv each time
-container
-  .bind<ICryptoService>(TYPES.cryptoService)
-  .toConstantValue(sharedCryptoService);
-
-container.bind<DataSource>(TYPES.dataSource).toConstantValue(AppDataSource);
 
 // Factories
 

@@ -1,10 +1,11 @@
 import { AuthChecker, ResolverData } from "type-graphql";
-import { inject, injectable } from "inversify";
+import { inject, injectable, interfaces } from "inversify";
 import { intersection, difference } from "underscore";
 
-import { IUserRepository, RoleName } from "../../datalayer";
+import { ITeamRepository, IUserRepository, RoleName } from "../../datalayer";
 import { AppContext } from "../../context";
 import { ICryptoService } from "../crypto";
+import { TYPES } from "../../container";
 
 export interface IAuthChecker {
   check: AuthChecker<AppContext>;
@@ -12,12 +13,6 @@ export interface IAuthChecker {
 
 @injectable()
 export class CustomAuthChecker implements IAuthChecker {
-  @inject("UserRepositoryFactory")
-  private userRepositoryFactory!: () => IUserRepository;
-
-  @inject("cryptoService")
-  cryptoService!: ICryptoService;
-
   public async check(
     resolverData: ResolverData<AppContext>,
     roles: string[]
@@ -28,11 +23,18 @@ export class CustomAuthChecker implements IAuthChecker {
 
     const { context } = resolverData;
 
+    const { container } = context;
+
+    const cryptoService = container.get<ICryptoService>(TYPES.cryptoService);
+    const userRepositoryFactory = container.get<() => IUserRepository>(
+      TYPES.UserRepositoryFactory
+    );
+
     if (!context.sessionUser?.jwt) {
       return false;
     }
 
-    const decodedToken = await this.cryptoService.verifyAndDecryptJwt(
+    const decodedToken = await cryptoService.verifyAndDecryptJwt(
       context.sessionUser?.jwt
     );
 
@@ -41,10 +43,10 @@ export class CustomAuthChecker implements IAuthChecker {
     }
 
     // use injected service
-    const userRepo = this.userRepositoryFactory();
+    const userRepo = userRepositoryFactory();
     const user = await userRepo.findOne({
       where: { email: decodedToken.email },
-      relations: ["siteRoles", "siteRoles.role"],
+      relations: ["roles"],
     });
 
     const userRoles = user?.roles.map((r) => r.roleName) || [];

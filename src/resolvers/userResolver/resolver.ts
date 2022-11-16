@@ -7,6 +7,8 @@ import {
   ResolverInterface,
   Root,
   Args,
+  Ctx,
+  Authorized,
 } from "type-graphql";
 import { inject, injectable } from "inversify";
 import { Logger } from "winston";
@@ -17,11 +19,13 @@ import {
   IUserRepository,
   IUserToTeamRepository,
   IVerificationTokenRepository,
+  RoleName,
   UserModel,
   UserToTeamModel,
 } from "../../datalayer";
 import { AuthenticationResponse, VerifyTokenResponse } from "./responseTypes";
 import { FindUserArg } from "./inputTypes";
+import { AppContext } from "../../context";
 
 @Resolver(() => UserModel)
 @injectable()
@@ -276,6 +280,20 @@ export class UserResolver implements ResolverInterface<UserModel> {
       return userRepo.findOneOrFail({ where: { email } });
     }
     throw new Error("Bad input");
+  }
+
+  @Authorized(RoleName.USER)
+  @Query(() => UserModel)
+  async me(@Ctx() context: AppContext): Promise<UserModel> {
+    const { sessionUser } = context;
+    if (!sessionUser?.jwt) {
+      throw new Error(
+        "Session user expected in all user auth level queries and mutations"
+      );
+    }
+    const userRepo = this.userRepositoryFactory();
+    const payload = this.cryptoService.decryptJwt(sessionUser.jwt);
+    return userRepo.findOneOrFail({ where: { email: payload.email } });
   }
 
   @FieldResolver(() => [UserToTeamModel], { name: "teamsPlayerIsOn" })

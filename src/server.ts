@@ -13,6 +13,7 @@ import { AppDataSource } from "./datalayer";
 import { TeamResolver, UserResolver, TeamPlayerResolver } from "./resolvers";
 import { AppContext, createContextFunction } from "./context";
 import { createLogger } from "./logger";
+import { CustomAuthChecker } from "./services";
 
 export async function startServer() {
   try {
@@ -25,9 +26,12 @@ export async function startServer() {
 
   const logger = createLogger({ executionId: v4() });
 
+  const customAuthChecker = new CustomAuthChecker();
+
   const schema = await buildSchema({
     container: ({ context }: ResolverData<AppContext>) => context.container,
     resolvers: [UserResolver, TeamResolver, TeamPlayerResolver],
+    authChecker: customAuthChecker.check.bind(customAuthChecker),
   });
 
   const server = new ApolloServer({

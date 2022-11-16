@@ -42,6 +42,7 @@ class CryptoService implements ICryptoService {
   private jwtSecret: string;
 
   constructor(appConfig: IAppConfig) {
+    console.log("crypto constructor");
     this.encryptionKey = crypto.scryptSync(
       appConfig.ENCRYPTION_SECRET,
       "salt",
@@ -128,6 +129,8 @@ class CryptoService implements ICryptoService {
   }
 
   verifyAndDecryptJwt(token: string): Promise<JwtBody> {
+    console.log(`\nJWT SECRET: "${this.jwtSecret}"\n`);
+    console.log(`\ntoken: "${token}\n"`);
     return new Promise((resolve, reject) => {
       verify(token, this.jwtSecret, (err, decoded) => {
         if (err) {
