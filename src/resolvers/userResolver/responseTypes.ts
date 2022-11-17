@@ -1,4 +1,6 @@
-import { Field, ObjectType } from "type-graphql";
+import { createUnionType, Field, ObjectType } from "type-graphql";
+import { UserModel } from "../../datalayer";
+import { BadInputResponse, NotFoundResponse } from "../types/responses";
 
 @ObjectType()
 export class VerifyTokenResponse {
@@ -31,3 +33,21 @@ export class AuthenticationResponse {
   })
   authenticationError?: string;
 }
+
+export const UserQueryUnion = createUnionType({
+  name: "UserQueryResult",
+  types: () => [UserModel, BadInputResponse, NotFoundResponse] as const,
+  // our implementation of detecting returned object type
+  resolveType: (value: UserModel | BadInputResponse | NotFoundResponse) => {
+    if ("id" in value) {
+      return UserModel;
+    }
+    switch (value.__typename) {
+      case "BadInputResponse":
+        return BadInputResponse;
+      case "NotFoundResponse":
+        return NotFoundResponse;
+    }
+    return undefined;
+  },
+});

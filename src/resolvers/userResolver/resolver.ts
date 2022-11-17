@@ -23,9 +23,14 @@ import {
   UserModel,
   UserToTeamModel,
 } from "../../datalayer";
-import { AuthenticationResponse, VerifyTokenResponse } from "./responseTypes";
+import {
+  AuthenticationResponse,
+  UserQueryUnion,
+  VerifyTokenResponse,
+} from "./responseTypes";
 import { FindUserArg } from "./inputTypes";
 import { AppContext } from "../../context";
+import { BadInputResponse, NotFoundResponse } from "../types/responses";
 
 @Resolver(() => UserModel)
 @injectable()
@@ -269,17 +274,28 @@ export class UserResolver implements ResolverInterface<UserModel> {
     }
   }
 
-  @Query(() => UserModel)
-  async user(@Args() findUserParams: FindUserArg): Promise<UserModel> {
+  @Query(() => UserQueryUnion)
+  async user(
+    @Args() findUserParams: FindUserArg
+  ): Promise<typeof UserQueryUnion> {
     const { userId, email } = findUserParams;
     const userRepo = this.userRepositoryFactory();
-    if (userId) {
-      return userRepo.findOneOrFail({ where: { id: userId } });
+    let where = {};
+    try {
+      if (userId) {
+        where = { id: userId };
+        return userRepo.findOneOrFail({ where });
+      }
+      if (email) {
+        where = { email };
+        return userRepo.findOneOrFail({ where });
+      }
+    } catch (e) {
+      return new NotFoundResponse("User", JSON.stringify(where));
     }
-    if (email) {
-      return userRepo.findOneOrFail({ where: { email } });
-    }
-    throw new Error("Bad input");
+    return new BadInputResponse(
+      "An email or a userId must be provided, received neither"
+    );
   }
 
   @Authorized(RoleName.USER)
