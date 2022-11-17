@@ -31,14 +31,14 @@ export function verificationTokenRepositoryFactory(
         }> {
           const secret = cryptoService.generateSecret();
           const tokenString = JSON.stringify({
-            email: user.email,
+            email: user.emailAddress,
             secret,
           });
           const { result, initializationVector } = await cryptoService.encrypt({
             unencryptedInput: tokenString,
           });
           const verificationToken = this.create({
-            email: user.email,
+            email: user.emailAddress,
             secret,
             user,
             createdAt: Date.now(),

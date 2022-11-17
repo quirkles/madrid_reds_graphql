@@ -14,5 +14,5 @@ export class FindUserArg {
     description:
       "Email of the user, if known. However userId takes precedence if both are passed",
   })
-  email?: string;
+  emailAddress?: string;
 }

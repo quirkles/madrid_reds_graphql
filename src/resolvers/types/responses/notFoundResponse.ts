@@ -5,6 +5,8 @@ import { AlternateResponse } from "./baseAlternateResponse";
 export class NotFoundResponse extends AlternateResponse {
   constructor(entityType: string, lookupParams: string) {
     super("NotFoundResponse");
+    this.entityType = entityType;
+    this.lookupParams = lookupParams;
   }
 
   @Field({ description: "The type of entity that was requested" })

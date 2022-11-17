@@ -1,36 +1,33 @@
 import {
-  Resolver,
-  Query,
-  Mutation,
   Arg,
+  Args,
+  Authorized,
+  Ctx,
   FieldResolver,
+  Mutation,
+  Query,
+  Resolver,
   ResolverInterface,
   Root,
-  Args,
-  Ctx,
-  Authorized,
 } from "type-graphql";
-import { inject, injectable } from "inversify";
-import { Logger } from "winston";
+import {inject, injectable} from "inversify";
+import {Logger} from "winston";
 
-import { ICryptoService, IMailerService } from "../../services";
+import {ICryptoService, IMailerService} from "../../services";
 import {
   IAuthenticationTokenRepository,
   IUserRepository,
   IUserToTeamRepository,
   IVerificationTokenRepository,
+  RoleModel,
   RoleName,
   UserModel,
   UserToTeamModel,
 } from "../../datalayer";
-import {
-  AuthenticationResponse,
-  UserQueryUnion,
-  VerifyTokenResponse,
-} from "./responseTypes";
-import { FindUserArg } from "./inputTypes";
-import { AppContext } from "../../context";
-import { BadInputResponse, NotFoundResponse } from "../types/responses";
+import {AuthenticationResponse, UserQueryUnion, VerifyTokenResponse,} from "./responseTypes";
+import {FindUserArg} from "./inputTypes";
+import {AppContext} from "../../context";
+import {BadInputResponse, NotFoundResponse} from "../types/responses";
 
 @Resolver(() => UserModel)
 @injectable()
@@ -62,14 +59,14 @@ export class UserResolver implements ResolverInterface<UserModel> {
       const userRepo = this.userRepositoryFactory();
       const verificationTokenRepo = this.verificationTokenRepositoryFactory();
       let user = await userRepo.findOne({
-        where: { email: emailAddress },
+        where: { emailAddress },
         relations: { verificationTokens: true },
       });
       if (user) {
         this.logger.info("User already exists");
       } else {
         user = await userRepo.create({
-          email: emailAddress,
+          emailAddress,
           isVerified: false,
         });
         user.verificationTokens = [];
@@ -101,7 +98,7 @@ export class UserResolver implements ResolverInterface<UserModel> {
       const authenticationTokenRepository =
         this.authenticationTokenRepositoryFactory();
       const user = await userRepo.findOne({
-        where: { email: emailAddress },
+        where: { emailAddress },
         relations: { verificationTokens: true },
       });
       if (!user) {
@@ -182,7 +179,7 @@ export class UserResolver implements ResolverInterface<UserModel> {
         await verificationTokenRepo.verifyUserWithToken(verificationToken);
         return {
           wasVerificationSuccessful: true,
-          jwt: this.cryptoService.signJwt({ email: emailAddress }),
+          jwt: this.cryptoService.signJwt({ emailAddress }),
         };
       } else {
         return {
@@ -255,7 +252,7 @@ export class UserResolver implements ResolverInterface<UserModel> {
         );
         return {
           wasAuthenticationSuccessful: true,
-          jwt: this.cryptoService.signJwt({ email: emailAddress }),
+          jwt: this.cryptoService.signJwt({ emailAddress }),
         };
       } else {
         return {
@@ -278,17 +275,17 @@ export class UserResolver implements ResolverInterface<UserModel> {
   async user(
     @Args() findUserParams: FindUserArg
   ): Promise<typeof UserQueryUnion> {
-    const { userId, email } = findUserParams;
+    const { userId, emailAddress } = findUserParams;
     const userRepo = this.userRepositoryFactory();
     let where = {};
     try {
       if (userId) {
         where = { id: userId };
-        return userRepo.findOneOrFail({ where });
+        return await userRepo.findOneOrFail({ where });
       }
-      if (email) {
-        where = { email };
-        return userRepo.findOneOrFail({ where });
+      if (emailAddress) {
+        where = { emailAddress };
+        return await userRepo.findOneOrFail({ where });
       }
     } catch (e) {
       return new NotFoundResponse("User", JSON.stringify(where));
@@ -309,7 +306,9 @@ export class UserResolver implements ResolverInterface<UserModel> {
     }
     const userRepo = this.userRepositoryFactory();
     const payload = this.cryptoService.decryptJwt(sessionUser.jwt);
-    return userRepo.findOneOrFail({ where: { email: payload.email } });
+    return userRepo.findOneOrFail({
+      where: { emailAddress: payload.emailAddress },
+    });
   }
 
   @FieldResolver(() => [UserToTeamModel], { name: "teamsPlayerIsOn" })
@@ -320,5 +319,11 @@ export class UserResolver implements ResolverInterface<UserModel> {
         userId: user.id,
       },
     });
+  }
+
+  @FieldResolver(() => [RoleModel])
+  async roles(@Root() user: UserModel): Promise<RoleModel[]> {
+    const repo = this.userRepositoryFactory();
+    return repo.findRoles(user.id);
   }
 }

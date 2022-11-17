@@ -2,7 +2,7 @@ import { DataSource, Repository } from "typeorm";
 import { RoleModel, UserToTeamModel } from "../models";
 
 export type IUserToTeamRepository = Repository<UserToTeamModel> & {
-  findRolesForUserOnTeam(userId: string, teamId: string): Promise<RoleModel[]>;
+  findTeamRoles(userId: string, teamId: string): Promise<RoleModel[]>;
 };
 
 let repoSingleton: IUserToTeamRepository;
@@ -12,7 +12,7 @@ export function userToTeamRepositoryFactory(
 ): IUserToTeamRepository {
   if (!repoSingleton) {
     repoSingleton = datasource.getRepository(UserToTeamModel).extend({
-      async findRolesForUserOnTeam(
+      async findTeamRoles(
         userId: string,
         teamId: string
       ): Promise<RoleModel[]> {
@@ -23,7 +23,7 @@ export function userToTeamRepositoryFactory(
             userId,
             teamId,
           },
-          relations: ["roles"],
+          relations: ["roles", "roles.scope"],
         });
         return userTeam?.roles || [];
       },

@@ -55,7 +55,7 @@ export class TeamPlayerResolver implements ResolverInterface<UserToTeamModel> {
 
   @FieldResolver(() => RoleModel)
   async roles(@Root() teamPlayer: UserToTeamModel): Promise<RoleModel[]> {
-    return this.userToTeamRepositoryFactory().findRolesForUserOnTeam(
+    return this.userToTeamRepositoryFactory().findTeamRoles(
       teamPlayer.userId,
       teamPlayer.teamId
     );

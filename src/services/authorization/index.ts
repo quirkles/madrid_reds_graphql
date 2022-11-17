@@ -45,7 +45,7 @@ export class CustomAuthChecker implements IAuthChecker {
     // use injected service
     const userRepo = userRepositoryFactory();
     const user = await userRepo.findOne({
-      where: { email: decodedToken.email },
+      where: { emailAddress: decodedToken.emailAddress },
       relations: ["roles"],
     });
 

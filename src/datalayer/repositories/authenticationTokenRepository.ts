@@ -31,7 +31,7 @@ export function authenticationTokenRepositoryFactory(
         }> {
           const secret = cryptoService.generateSecret();
           const tokenString = JSON.stringify({
-            email: user.email,
+            email: user.emailAddress,
             secret,
           });
           const { result, initializationVector } = await cryptoService.encrypt({
@@ -39,7 +39,7 @@ export function authenticationTokenRepositoryFactory(
           });
 
           const authenticationToken = this.create({
-            email: user.email,
+            email: user.emailAddress,
             secret,
             createdAt: Date.now(),
             user,

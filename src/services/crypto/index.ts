@@ -23,7 +23,7 @@ interface DecryptionParams {
 }
 
 export interface JwtBody {
-  email: string;
+  emailAddress: string;
 }
 
 export interface ICryptoService {
@@ -42,7 +42,6 @@ class CryptoService implements ICryptoService {
   private jwtSecret: string;
 
   constructor(appConfig: IAppConfig) {
-    console.log("crypto constructor");
     this.encryptionKey = crypto.scryptSync(
       appConfig.ENCRYPTION_SECRET,
       "salt",
