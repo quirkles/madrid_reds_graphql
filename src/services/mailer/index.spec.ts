@@ -60,7 +60,12 @@ describe("IMailerService", () => {
         "iv-string"
       );
       expect(createTransport as jest.Mock).toHaveBeenCalledWith({
-        apiKey: "SENDGRID_API_KEY",
+        auth: {
+          pass: "MAILTRAP_PASS",
+          user: "MAILTRAP_USER",
+        },
+        host: "smtp.mailtrap.io",
+        port: 2525,
       });
       expect(sendMailMock).toHaveBeenCalledWith({
         from: "al.quirk@gmail.com",
@@ -76,8 +81,37 @@ describe("IMailerService", () => {
         to: "recipient@test.com",
       });
     });
+    it("sends a sign in email with a verification link through sendgrid", async () => {
+      expect.assertions(2);
+      await mailer.sendLoginEmail(
+        "recipient@test.com",
+        "auth-token-abc",
+        "iv-string"
+      );
+      expect(createTransport as jest.Mock).toHaveBeenCalledWith({
+        auth: {
+          pass: "MAILTRAP_PASS",
+          user: "MAILTRAP_USER",
+        },
+        host: "smtp.mailtrap.io",
+        port: 2525,
+      });
+      expect(sendMailMock).toHaveBeenCalledWith({
+        from: "al.quirk@gmail.com",
+        html: `
+<h1>Hi!</h1>
+<h2>Welcome to madrid reds!</h2>
+<div>
+    <p>You requested a login to madrid reds.</p>
+    <a href="AUTHENTICATE_URL?iv=iv-string&authenticationToken=auth-token-abc">Click here to login on this device</a>
+</div>`,
+        subject: "Log in to madrid reds",
+        text: "Go here to log in: AUTHENTICATE_URL?iv=iv-string&authenticationToken=auth-token-abc",
+        to: "recipient@test.com",
+      });
+    });
   });
-  describe.skip("in the dev environment", () => {
+  describe("in the dev environment", () => {
     const mailer = new MailerService(
       {
         env: "dev",
@@ -98,12 +132,7 @@ describe("IMailerService", () => {
         "iv-string"
       );
       expect(createTransport as jest.Mock).toHaveBeenCalledWith({
-        auth: {
-          pass: "MAILTRAP_PASS",
-          user: "MAILTRAP_USER",
-        },
-        host: "smtp.mailtrap.io",
-        port: 2525,
+        apiKey: "SENDGRID_API_KEY",
       });
       expect(sendMailMock).toHaveBeenCalledWith({
         from: "al.quirk@gmail.com",
@@ -116,6 +145,30 @@ describe("IMailerService", () => {
 </div>`,
         subject: "Confirm your email address",
         text: "Go here: VERIFY_EMAIL_URL?iv=iv-string&verificationToken=verification-token-abc",
+        to: "recipient@test.com",
+      });
+    });
+    it("sends a sign in email with a verification link through sendgrid", async () => {
+      expect.assertions(2);
+      await mailer.sendLoginEmail(
+        "recipient@test.com",
+        "auth-token-abc",
+        "iv-string"
+      );
+      expect(createTransport as jest.Mock).toHaveBeenCalledWith({
+        apiKey: "SENDGRID_API_KEY",
+      });
+      expect(sendMailMock).toHaveBeenCalledWith({
+        from: "al.quirk@gmail.com",
+        html: `
+<h1>Hi!</h1>
+<h2>Welcome to madrid reds!</h2>
+<div>
+    <p>You requested a login to madrid reds.</p>
+    <a href="AUTHENTICATE_URL?iv=iv-string&authenticationToken=auth-token-abc">Click here to login on this device</a>
+</div>`,
+        subject: "Log in to madrid reds",
+        text: "Go here to log in: AUTHENTICATE_URL?iv=iv-string&authenticationToken=auth-token-abc",
         to: "recipient@test.com",
       });
     });
