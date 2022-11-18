@@ -4,19 +4,19 @@ import { injectable } from "inversify";
 
 import { IAppConfig } from "../../config";
 
-interface EncryptionResult {
+export interface EncryptionResult {
   result: string;
   initializationVector: Buffer;
   algorithmUsedToEncrypt: "aes-192-cbc";
 }
 
-interface EncryptionParams {
+export interface EncryptionParams {
   unencryptedInput: string;
   initializationVector?: Buffer;
   algorithmUsedToEncrypt?: "aes-192-cbc";
 }
 
-interface DecryptionParams {
+export interface DecryptionParams {
   encryptedInput: string;
   initializationVector: Buffer;
   algorithmUsedToEncrypt?: "aes-192-cbc";

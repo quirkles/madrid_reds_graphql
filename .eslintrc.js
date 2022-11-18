@@ -18,5 +18,12 @@ module.exports = {
   rules: {
     "prettier/prettier": 2,
   },
-  overrides: [],
+  overrides: [
+    {
+      files: "**/*.spec.*",
+      rules: {
+        "@typescript-eslint/no-explicit-any": 0,
+      },
+    },
+  ],
 };

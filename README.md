@@ -52,7 +52,7 @@ You are guaranteed to only have 1 keeper and 1 team captain per team. Teams will
 ## External services
 The auth and the signup flows send an email with a link to the expected url of a gcp function to exist that handles the token and sets a jwt.
 
-You can get the jwt from the mutations those functuons would call:
+You can get the jwt from the mutations those functions would call:
 
 ```graphql
     authenticateSignInToken(emailAddress: $emailAddress, secret: $secret) {
@@ -69,4 +69,4 @@ Or
         verificationError
     }
 ```
-The secret can be found by looking up the tokens in the db
+The secret can be found by looking up the tokens in the db.

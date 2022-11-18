@@ -21,9 +21,8 @@ export interface IMailerService {
 
 @injectable()
 export class MailerService implements IMailerService {
-  @inject("cryptoService") cryptoService!: ICryptoService;
-  @inject("logger") logger!: Logger;
-
+  private cryptoService: ICryptoService;
+  private logger: Logger;
   private transporter?: Transporter;
 
   private readonly useMailtrap: boolean;
@@ -35,8 +34,16 @@ export class MailerService implements IMailerService {
   private readonly verifyEmailUrl!: string;
   private readonly authenticateUrl!: string;
 
-  constructor(@inject("appConfig") appConfig: IAppConfig) {
+  constructor(
+    @inject("appConfig") appConfig: IAppConfig,
+    @inject("cryptoService") cryptoService: ICryptoService,
+    @inject("logger") logger: Logger
+  ) {
+    this.logger = logger;
+    this.cryptoService = cryptoService;
+
     this.useMailtrap = appConfig.env === "local";
+
     this.sendgridApi = appConfig.SENDGRID_API_KEY;
     this.mailtrapUser = appConfig.MAILTRAP_USER;
     this.mailtrapPass = appConfig.MAILTRAP_PASS;
@@ -111,19 +118,17 @@ export class MailerService implements IMailerService {
     initializationVectorString: string
   ): Promise<void> {
     const confirmUrl = `${this.verifyEmailUrl}`;
-    const ivString = initializationVectorString;
     const html = `
 <h1>Hi!</h1>
 <h2>Welcome to madrid reds!</h2>
 <div>
     <p>We need to confirm your email address.</p>
-    <a href="${confirmUrl}?iv=${ivString}&verificationToken=${verificationToken}">Click to confirm your email address</a>
-    <p>Heres some after text</p>
+    <a href="${confirmUrl}?iv=${initializationVectorString}&verificationToken=${verificationToken}">Click to confirm your email address</a>
 </div>`;
     return this.sendMail(
       recipient,
       "Confirm your email address",
-      "Click on this link: http://google.com",
+      `Go here: ${confirmUrl}?iv=${initializationVectorString}&verificationToken=${verificationToken}`,
       html
     );
   }
@@ -143,8 +148,8 @@ export class MailerService implements IMailerService {
 </div>`;
     return this.sendMail(
       recipient,
-      "Confirm your email address",
-      "Click on this link: http://google.com",
+      "Log in to madrid reds",
+      `Go here to log in: ${authenticateUrl}?iv=${initializationVectorString}&authenticationToken=${authenticationToken}`,
       html
     );
   }

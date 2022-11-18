@@ -12,7 +12,7 @@ import { appConfig } from "./config";
 import { AppDataSource } from "./datalayer";
 import { TeamResolver, UserResolver, TeamPlayerResolver } from "./resolvers";
 import { AppContext, createContextFunction } from "./context";
-import { createLogger } from "./logger";
+import { createLogger } from "./services/logger/logger";
 import { CustomAuthChecker } from "./services";
 
 export async function startServer() {
