@@ -12,6 +12,7 @@ const TYPES = {
   RoleRepositoryFactory: "RoleRepositoryFactory",
   SeasonRepositoryFactory: "SeasonRepositoryFactory",
   TeamRepositoryFactory: "TeamRepositoryFactory",
+  TeamInSeasonRepositoryFactory: "TeamInSeasonRepositoryFactory",
   UserRepositoryFactory: "UserRepositoryFactory",
   VerificationTokenFactory: "VerificationTokenFactory",
 

@@ -5,5 +5,6 @@ export * from "./playerRepository";
 export * from "./roleRepository";
 export * from "./seasonRepository";
 export * from "./teamRepository";
+export * from "./teamInSeasonRepository";
 export * from "./userRepository";
 export * from "./verificationTokenRepository";

@@ -10,7 +10,13 @@ import { container } from "./container";
 
 import { appConfig } from "./config";
 import { AppDataSource } from "./datalayer";
-import { TeamResolver, UserResolver } from "./resolvers";
+import {
+  TeamResolver,
+  TeamInSeasonResolver,
+  UserResolver,
+  PlayerResolver,
+  SeasonResolver,
+} from "./resolvers";
 import { AppContext, createContextFunction } from "./context";
 import { CustomAuthChecker, createLogger } from "./services";
 
@@ -29,7 +35,13 @@ export async function startServer() {
 
   const schema = await buildSchema({
     container: ({ context }: ResolverData<AppContext>) => context.container,
-    resolvers: [UserResolver, TeamResolver],
+    resolvers: [
+      UserResolver,
+      TeamResolver,
+      TeamInSeasonResolver,
+      PlayerResolver,
+      SeasonResolver,
+    ],
     authChecker: customAuthChecker.check.bind(customAuthChecker),
   });
 

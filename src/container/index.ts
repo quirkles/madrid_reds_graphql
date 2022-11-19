@@ -10,7 +10,13 @@ import {
   CustomAuthChecker,
   IAuthChecker,
 } from "../services";
-import { UserResolver, TeamResolver, OrganizationResolver } from "../resolvers";
+import {
+  UserResolver,
+  TeamResolver,
+  TeamInSeasonResolver,
+  OrganizationResolver,
+  PlayerResolver,
+} from "../resolvers";
 import { appConfig, IAppConfig } from "../config";
 import {
   AppDataSource,
@@ -32,6 +38,8 @@ import {
   teamRepositoryFactory,
   userRepositoryFactory,
   verificationTokenRepositoryFactory,
+  ITeamInSeasonRepository,
+  teamInSeasonRepositoryFactory,
 } from "../datalayer";
 
 const container = new Container({ skipBaseClassChecks: true });
@@ -51,8 +59,15 @@ container
   .inSingletonScope();
 
 container.bind<TeamResolver>(TeamResolver).to(TeamResolver).inSingletonScope();
+container
+  .bind<TeamInSeasonResolver>(TeamInSeasonResolver)
+  .to(TeamInSeasonResolver)
+  .inSingletonScope();
 
-// container.bind<TeamResolver>(TeamResolver).to(TeamResolver).inSingletonScope();
+container
+  .bind<PlayerResolver>(PlayerResolver)
+  .to(PlayerResolver)
+  .inSingletonScope();
 
 // Services
 container.bind<IMailerService>(TYPES.MailerService).to(MailerService);
@@ -66,6 +81,18 @@ container
   .toFactory<ITeamRepository>((context: interfaces.Context) => {
     return () => {
       return teamRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
+container
+  .bind<interfaces.Factory<ITeamInSeasonRepository>>(
+    TYPES.TeamInSeasonRepositoryFactory
+  )
+  .toFactory<ITeamInSeasonRepository>((context: interfaces.Context) => {
+    return () => {
+      return teamInSeasonRepositoryFactory(
+        context.container.get(TYPES.dataSource)
+      );
     };
   });
 

@@ -4,6 +4,7 @@ import {
   RoleModel,
   RoleName,
   SeasonModel,
+  TeamInSeasonModel,
   TeamModel,
   UserModel,
 } from "../models";
@@ -33,14 +34,16 @@ async function createSeason(
   }).save();
   console.log("Adding players for season: ", seasonName);
   const seasonPlayers: PlayerModel[] = [];
-  const seasonTeams: TeamModel[] = [];
-  teamsWithPlayerPools.forEach((teamWithPlayerPool) => {
+  for (const teamWithPlayerPool of teamsWithPlayerPools) {
     const { team, playerPool } = teamWithPlayerPool;
+    const teamInSeason = await TeamInSeasonModel.create({
+      teamId: team.id,
+      seasonId: season.id,
+    }).save();
     const players = _.sample(playerPool, _.random(10, 14)).map((user) => {
       return PlayerModel.create({
         userId: user.id,
-        teamId: team.id,
-        seasonId: season.id,
+        teamInSeasonId: teamInSeason.id,
         position: _.sample(playerPositions),
         roles: [playerRole],
       });
@@ -53,14 +56,10 @@ async function createSeason(
     captain.roles.push(captainRole);
     gk.position = "goalkeeper";
     seasonPlayers.push(...players);
-    seasonTeams.push(team);
-  });
+  }
   console.log("Added players for season: ", seasonName);
 
   await Promise.all(seasonPlayers.map((sp) => sp.save()));
-
-  season.players = seasonPlayers;
-  season.teams = seasonTeams;
 
   console.log("saving season", seasonName);
   await season.save();

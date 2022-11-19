@@ -13,8 +13,7 @@ import { Field, ID, ObjectType } from "type-graphql";
 import { UserModel } from "./userModel";
 import { RoleModel } from "./roleModel";
 import { GameEventModel } from "./gameEventModel";
-import { TeamModel } from "./teamModel";
-import { SeasonModel } from "./seasonModel";
+import { TeamInSeasonModel } from "./teamInSeasonModel";
 
 @Entity({ name: "player" })
 @ObjectType("Player", {
@@ -34,23 +33,15 @@ export class PlayerModel extends BaseEntity {
 
   @Field(() => ID)
   @Column()
-  public teamId!: string;
-
-  @Field(() => ID)
-  @Column()
-  seasonId!: string;
+  public teamInSeasonId!: string;
 
   @Field(() => UserModel)
   @ManyToOne(() => UserModel, (user) => user.seasonsAsPlayer)
   user!: UserModel;
 
-  @Field(() => TeamModel)
-  @ManyToOne(() => TeamModel, (team) => team.players)
-  team!: TeamModel;
-
-  @Field(() => SeasonModel)
-  @ManyToOne(() => SeasonModel, (season) => season.players)
-  season!: SeasonModel;
+  @Field(() => TeamInSeasonModel)
+  @ManyToOne(() => TeamInSeasonModel, (team) => team.players)
+  teamInSeason!: TeamInSeasonModel;
 
   @Field(() => [RoleModel])
   @JoinTable()

@@ -5,14 +5,12 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   ManyToMany,
-  OneToMany,
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
 
 import { DivisionModel } from "./divisionModel";
-import { TeamModel } from "./teamModel";
-import { PlayerModel } from "./playerModel";
 import { FixtureModel } from "./fixtureModel";
+import { TeamInSeasonModel } from "./teamInSeasonModel";
 
 @Entity({ name: "season" })
 @ObjectType("Season", {
@@ -40,15 +38,14 @@ export class SeasonModel extends BaseEntity {
   @ManyToOne(() => DivisionModel, (division) => division.seasons)
   division!: DivisionModel;
 
-  @Field(() => [PlayerModel])
-  @OneToMany(() => PlayerModel, (player) => player.season)
-  players!: PlayerModel[];
-
   @Field(() => [FixtureModel])
   @ManyToMany(() => FixtureModel, (fixture) => fixture.season)
   fixtures!: FixtureModel[];
 
-  @Field(() => [TeamModel])
-  @ManyToMany(() => TeamModel, (team) => team.seasons)
-  teams!: TeamModel[];
+  @Field(() => [TeamInSeasonModel])
+  @ManyToOne(
+    () => TeamInSeasonModel,
+    (TeamInSeasonModel) => TeamInSeasonModel.season
+  )
+  teams!: TeamInSeasonModel[];
 }

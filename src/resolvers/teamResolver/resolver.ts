@@ -1,6 +1,5 @@
 import {
   Arg,
-  Args,
   FieldResolver,
   Query,
   Resolver,
@@ -12,8 +11,7 @@ import {
   ITeamRepository,
   IUserRepository,
   TeamModel,
-  SeasonModel,
-  ISeasonRepository,
+  TeamInSeasonModel,
 } from "../../datalayer";
 import { Logger } from "winston";
 
@@ -35,8 +33,8 @@ class TeamResolver implements ResolverInterface<TeamModel> {
     return repo.findOneBy({ id });
   }
 
-  @FieldResolver(() => [SeasonModel], { name: "seasons" })
-  async seasons(@Root() root: TeamModel): Promise<SeasonModel[]> {
+  @FieldResolver(() => [TeamInSeasonModel])
+  async seasons(@Root() root: TeamModel): Promise<TeamInSeasonModel[]> {
     const repo = this.teamRepositoryFactory();
     const team = await repo.findOneOrFail({
       where: { id: root.id },

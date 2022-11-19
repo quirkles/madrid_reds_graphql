@@ -9,5 +9,6 @@ export { RoleModel, RoleName } from "./roleModel";
 export { RoleScopeModel, RoleScopeName } from "./roleScopeModel";
 export { SeasonModel } from "./seasonModel";
 export { TeamModel } from "./teamModel";
+export { TeamInSeasonModel } from "./teamInSeasonModel";
 export { UserModel } from "./userModel";
 export { VerificationTokenModel } from "./verificationTokenModel";
