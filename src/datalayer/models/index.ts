@@ -1,7 +1,14 @@
 export { AuthenticationTokenModel } from "./authenticationTokenModel";
-export { TeamModel } from "./teamModel";
-export { UserModel } from "./userModel";
+export { DivisionModel } from "./divisionModel";
+export { EventTypeModel } from "./eventTypeModel";
+export { FixtureModel } from "./fixtureModel";
+export { GameEventModel } from "./gameEventModel";
+export { LeagueModel } from "./leagueModel";
+export { OrganizationModel } from "./organizationModel";
 export { RoleModel, RoleName } from "./roleModel";
-export { RoleScopeModel, RoleScopeName } from "./roleScope";
+export { RoleScopeModel, RoleScopeName } from "./roleScopeModel";
+export { TeamModel } from "./teamModel";
+export { TeamToLeagueModel } from "./teamToLeagueModel";
+export { UserModel } from "./userModel";
 export { UserToTeamModel } from "./userToTeamModel";
 export { VerificationTokenModel } from "./verificationTokenModel";

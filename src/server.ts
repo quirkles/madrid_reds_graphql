@@ -12,8 +12,7 @@ import { appConfig } from "./config";
 import { AppDataSource } from "./datalayer";
 import { TeamResolver, UserResolver, TeamPlayerResolver } from "./resolvers";
 import { AppContext, createContextFunction } from "./context";
-import { createLogger } from "./services/logger/logger";
-import { CustomAuthChecker } from "./services";
+import { CustomAuthChecker, createLogger } from "./services";
 
 export async function startServer() {
   try {
@@ -24,7 +23,7 @@ export async function startServer() {
     );
   }
 
-  const logger = createLogger({ executionId: v4() });
+  const logger = createLogger(appConfig.env !== "local", { executionId: v4() });
 
   const customAuthChecker = new CustomAuthChecker();
 

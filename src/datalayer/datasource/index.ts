@@ -3,26 +3,40 @@ import { DataSource, DataSourceOptions } from "typeorm";
 import { appConfig } from "../../config";
 import {
   AuthenticationTokenModel,
+  DivisionModel,
+  EventTypeModel,
+  FixtureModel,
+  GameEventModel,
+  LeagueModel,
+  OrganizationModel,
   RoleModel,
+  RoleScopeModel,
   TeamModel,
+  TeamToLeagueModel,
   UserModel,
   UserToTeamModel,
   VerificationTokenModel,
 } from "../index";
-import { RoleScopeModel } from "../models";
 
 const { DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_NAME } =
   appConfig;
 
 const connectionOptionEntities: Pick<DataSourceOptions, "entities"> = {
   entities: [
-    UserModel,
-    TeamModel,
+    AuthenticationTokenModel,
+    DivisionModel,
+    EventTypeModel,
+    FixtureModel,
+    GameEventModel,
+    LeagueModel,
+    OrganizationModel,
     RoleModel,
     RoleScopeModel,
+    TeamModel,
+    TeamToLeagueModel,
+    UserModel,
     UserToTeamModel,
     VerificationTokenModel,
-    AuthenticationTokenModel,
   ],
 };
 

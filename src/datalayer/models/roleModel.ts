@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Field, ID, ObjectType, registerEnumType } from "type-graphql";
-import { RoleScopeModel } from "./roleScope";
+import { RoleScopeModel } from "./roleScopeModel";
 import { UserModel } from "./userModel";
 import { UserToTeamModel } from "./userToTeamModel";
 
@@ -41,7 +41,7 @@ export class RoleModel extends BaseEntity {
   scopeId!: string;
 
   @Field(() => RoleScopeModel)
-  @ManyToOne(() => RoleScopeModel, (scope) => scope.roles)
+  @ManyToOne(() => RoleScopeModel, (scope: RoleScopeModel) => scope.roles)
   scope!: RoleScopeModel;
 
   @Field(() => [UserModel], { name: "usersWithRole" })

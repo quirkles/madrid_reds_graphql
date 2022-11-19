@@ -5,15 +5,18 @@ import {
   ManyToOne,
   BaseEntity,
   ManyToMany,
-  JoinTable,
+  JoinTable, OneToMany,
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
 import { UserModel } from "./userModel";
 import { TeamModel } from "./teamModel";
 import { RoleModel } from "./roleModel";
+import {GameEventModel} from "./gameEventModel";
 
 @Entity({ name: "user_to_team" })
-@ObjectType("TeamPlayer", {})
+@ObjectType("TeamPlayer", {
+  description: "A users appearance on a specific team",
+})
 export class UserToTeamModel extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   public id!: string;
@@ -42,4 +45,8 @@ export class UserToTeamModel extends BaseEntity {
   @JoinTable()
   @ManyToMany(() => RoleModel, (role) => role.teamPlayersWithRole)
   roles!: RoleModel[];
+
+  @Field(() => [GameEventModel])
+  @OneToMany(() => GameEventModel, (event) => event.player)
+  gameEvents!: GameEventModel[];
 }
