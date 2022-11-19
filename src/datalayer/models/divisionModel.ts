@@ -34,5 +34,5 @@ export class DivisionModel extends BaseEntity {
 
   @Field(() => OrganizationModel)
   @ManyToOne(() => OrganizationModel, (org) => org.divisions)
-  public organization!: OrganizationModel;
+  organization!: OrganizationModel;
 }

@@ -9,7 +9,7 @@ const organizations = [
 
 export async function createOrganizations(): Promise<OrganizationModel[]> {
   const orgs: OrganizationModel[] = [];
-  for (const name in organizations) {
+  for (const name of organizations) {
     orgs.push(
       (await OrganizationModel.findOne({
         where: {
@@ -17,7 +17,7 @@ export async function createOrganizations(): Promise<OrganizationModel[]> {
         },
       })) ||
         (await OrganizationModel.create({
-          name,
+          name: name,
         }).save())
     );
   }
