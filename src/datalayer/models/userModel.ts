@@ -11,8 +11,8 @@ import { Field, ID, ObjectType } from "type-graphql";
 
 import { VerificationTokenModel } from "./verificationTokenModel";
 import { AuthenticationTokenModel } from "./authenticationTokenModel";
-import { UserToTeamModel } from "./userToTeamModel";
 import { RoleModel } from "./roleModel";
+import { PlayerModel } from "./playerModel";
 
 @Entity({ name: "user" })
 @ObjectType("User", {})
@@ -39,9 +39,9 @@ export class UserModel extends BaseEntity {
   @OneToMany(() => AuthenticationTokenModel, (token) => token.user)
   authenticationTokens!: AuthenticationTokenModel[];
 
-  @Field(() => [UserToTeamModel], { name: "teamsPlayerIsOn" })
-  @OneToMany(() => UserToTeamModel, (userToTeam) => userToTeam.user)
-  userToTeams!: UserToTeamModel[];
+  @Field(() => [PlayerModel])
+  @OneToMany(() => PlayerModel, (player) => player.user)
+  seasonsAsPlayer!: PlayerModel[];
 
   @Field(() => [RoleModel], { name: "roles" })
   @JoinTable()

@@ -9,7 +9,7 @@ import {
 import { Field, ID, ObjectType } from "type-graphql";
 
 import { OrganizationModel } from "./organizationModel";
-import { LeagueModel } from "./leagueModel";
+import { SeasonModel } from "./seasonModel";
 
 @Entity({ name: "division" })
 @ObjectType("Division", {
@@ -22,11 +22,15 @@ export class DivisionModel extends BaseEntity {
 
   @Field(() => String)
   @Column()
+  organizationId!: string;
+
+  @Field(() => String)
+  @Column()
   name!: string;
 
-  @Field(() => [LeagueModel])
-  @OneToMany(() => LeagueModel, (league) => league.division)
-  leagues!: LeagueModel[];
+  @Field(() => [SeasonModel])
+  @OneToMany(() => SeasonModel, (season) => season.division)
+  seasons!: SeasonModel[];
 
   @Field(() => OrganizationModel)
   @ManyToOne(() => OrganizationModel, (org) => org.divisions)

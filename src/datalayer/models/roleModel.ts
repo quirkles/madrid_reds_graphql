@@ -9,7 +9,7 @@ import {
 import { Field, ID, ObjectType, registerEnumType } from "type-graphql";
 import { RoleScopeModel } from "./roleScopeModel";
 import { UserModel } from "./userModel";
-import { UserToTeamModel } from "./userToTeamModel";
+import { PlayerModel } from "./playerModel";
 
 export const RoleName = {
   ANYONE: "ANYONE",
@@ -48,7 +48,7 @@ export class RoleModel extends BaseEntity {
   @ManyToMany(() => UserModel, (user) => user.roles)
   usersWithRole!: UserModel[];
 
-  @Field(() => [UserToTeamModel], { name: "teamPlayersWithRole" })
-  @ManyToMany(() => UserToTeamModel, (teamPlayer) => teamPlayer.roles)
-  teamPlayersWithRole!: UserToTeamModel[];
+  @Field(() => [PlayerModel], { name: "teamPlayersWithRole" })
+  @ManyToMany(() => PlayerModel, (player) => player.roles)
+  teamPlayersWithRole!: PlayerModel[];
 }

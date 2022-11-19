@@ -10,22 +10,28 @@ import {
   CustomAuthChecker,
   IAuthChecker,
 } from "../services";
-import { UserResolver, TeamResolver, TeamPlayerResolver } from "../resolvers";
+import { UserResolver, TeamResolver, OrganizationResolver } from "../resolvers";
 import { appConfig, IAppConfig } from "../config";
 import {
   AppDataSource,
-  authenticationTokenRepositoryFactory,
   IAuthenticationTokenRepository,
+  IDivisionRepository,
+  IOrganizationRepository,
+  IPlayerRepository,
+  IRoleRepository,
+  ISeasonRepository,
   ITeamRepository,
   IUserRepository,
   IVerificationTokenRepository,
-  IUserToTeamRepository,
-  IRoleRepository,
+  authenticationTokenRepositoryFactory,
+  divisionRepositoryFactory,
+  organizationRepositoryFactory,
+  playerRepositoryFactory,
+  roleRepositoryFactory,
+  seasonRepositoryFactory,
   teamRepositoryFactory,
   userRepositoryFactory,
   verificationTokenRepositoryFactory,
-  userToTeamRepositoryFactory,
-  roleRepositoryFactory,
 } from "../datalayer";
 
 const container = new Container({ skipBaseClassChecks: true });
@@ -39,11 +45,14 @@ container.bind<DataSource>(TYPES.dataSource).toConstantValue(AppDataSource);
 
 // Resolvers
 container.bind<UserResolver>(UserResolver).to(UserResolver).inSingletonScope();
-container.bind<TeamResolver>(TeamResolver).to(TeamResolver).inSingletonScope();
 container
-  .bind<TeamPlayerResolver>(TeamPlayerResolver)
-  .to(TeamPlayerResolver)
+  .bind<OrganizationResolver>(OrganizationResolver)
+  .to(OrganizationResolver)
   .inSingletonScope();
+
+container.bind<TeamResolver>(TeamResolver).to(TeamResolver).inSingletonScope();
+
+// container.bind<TeamResolver>(TeamResolver).to(TeamResolver).inSingletonScope();
 
 // Services
 container.bind<IMailerService>(TYPES.MailerService).to(MailerService);
@@ -69,6 +78,28 @@ container
   });
 
 container
+  .bind<interfaces.Factory<IDivisionRepository>>(
+    TYPES.DivisionRepositoryFactory
+  )
+  .toFactory<IDivisionRepository>((context: interfaces.Context) => {
+    return () => {
+      return divisionRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
+container
+  .bind<interfaces.Factory<IOrganizationRepository>>(
+    TYPES.OrganizationRepositoryFactory
+  )
+  .toFactory<IOrganizationRepository>((context: interfaces.Context) => {
+    return () => {
+      return organizationRepositoryFactory(
+        context.container.get(TYPES.dataSource)
+      );
+    };
+  });
+
+container
   .bind<interfaces.Factory<IUserRepository>>(TYPES.RoleRepositoryFactory)
   .toFactory<IRoleRepository>((context: interfaces.Context) => {
     return () => {
@@ -77,14 +108,18 @@ container
   });
 
 container
-  .bind<interfaces.Factory<IUserToTeamRepository>>(
-    TYPES.UserToTeamRepositoryFactory
-  )
-  .toFactory<IUserToTeamRepository>((context: interfaces.Context) => {
+  .bind<interfaces.Factory<ISeasonRepository>>(TYPES.SeasonRepositoryFactory)
+  .toFactory<ISeasonRepository>((context: interfaces.Context) => {
     return () => {
-      return userToTeamRepositoryFactory(
-        context.container.get(TYPES.dataSource)
-      );
+      return seasonRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
+container
+  .bind<interfaces.Factory<IPlayerRepository>>(TYPES.PlayerRepositoryFactory)
+  .toFactory<IPlayerRepository>((context: interfaces.Context) => {
+    return () => {
+      return playerRepositoryFactory(context.container.get(TYPES.dataSource));
     };
   });
 

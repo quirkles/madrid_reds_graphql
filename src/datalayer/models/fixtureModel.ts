@@ -8,8 +8,9 @@ import {
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
 
-import { TeamToLeagueModel } from "./teamToLeagueModel";
+import { TeamModel } from "./teamModel";
 import { GameEventModel } from "./gameEventModel";
+import { SeasonModel } from "./seasonModel";
 
 @Entity({ name: "fixture" })
 @ObjectType("Fixture", {})
@@ -30,11 +31,17 @@ export class FixtureModel extends BaseEntity {
   @Column()
   date!: Date;
 
-  @ManyToOne(() => TeamToLeagueModel, (team) => team.fixturesAsAwayTeam)
-  awayTeam!: TeamToLeagueModel;
+  @Field(() => SeasonModel)
+  @ManyToOne(() => SeasonModel, (season) => season.fixtures)
+  season!: SeasonModel;
 
-  @ManyToOne(() => TeamToLeagueModel, (team) => team.fixturesAsAwayTeam)
-  homeTeam!: TeamToLeagueModel;
+  @Field(() => TeamModel)
+  @ManyToOne(() => TeamModel, (team) => team.awayFixtures)
+  awayTeam!: TeamModel;
+
+  @Field(() => TeamModel)
+  @ManyToOne(() => TeamModel, (team) => team.homeFixtures)
+  homeTeam!: TeamModel;
 
   @Field(() => [GameEventModel])
   @OneToMany(() => GameEventModel, (event) => event.fixture)

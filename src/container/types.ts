@@ -5,12 +5,15 @@ const TYPES = {
   CustomAuthChecker: "CustomAuthChecker",
 
   // Factories
-  UserRepositoryFactory: "UserRepositoryFactory",
-  TeamRepositoryFactory: "TeamRepositoryFactory",
-  UserToTeamRepositoryFactory: "UserToTeamRepositoryFactory",
-  VerificationTokenFactory: "VerificationTokenFactory",
   AuthenticationTokenFactory: "AuthenticationTokenFactory",
+  DivisionRepositoryFactory: "DivisionRepositoryFactory",
+  OrganizationRepositoryFactory: "OrganizationRepositoryFactory",
+  PlayerRepositoryFactory: "PlayerRepositoryFactory",
   RoleRepositoryFactory: "RoleRepositoryFactory",
+  SeasonRepositoryFactory: "SeasonRepositoryFactory",
+  TeamRepositoryFactory: "TeamRepositoryFactory",
+  UserRepositoryFactory: "UserRepositoryFactory",
+  VerificationTokenFactory: "VerificationTokenFactory",
 
   // singleton class instances
   cryptoService: "cryptoService",

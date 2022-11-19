@@ -11,9 +11,9 @@ import { inject, injectable } from "inversify";
 import {
   ITeamRepository,
   IUserRepository,
-  IUserToTeamRepository,
   TeamModel,
-  UserToTeamModel,
+  SeasonModel,
+  ISeasonRepository,
 } from "../../datalayer";
 import { Logger } from "winston";
 
@@ -26,9 +26,6 @@ class TeamResolver implements ResolverInterface<TeamModel> {
   @inject("UserRepositoryFactory")
   private userRepositoryFactory!: () => IUserRepository;
 
-  @inject("UserToTeamRepositoryFactory")
-  private userToTeamRepositoryFactory!: () => IUserToTeamRepository;
-
   @inject("logger")
   private logger!: Logger;
 
@@ -38,12 +35,14 @@ class TeamResolver implements ResolverInterface<TeamModel> {
     return repo.findOneBy({ id });
   }
 
-  @FieldResolver(() => [UserToTeamModel], { name: "players" })
-  async userToTeams(@Root() team: TeamModel): Promise<UserToTeamModel[]> {
-    const repo = this.userToTeamRepositoryFactory();
-    return repo.find({
-      where: { teamId: team.id },
+  @FieldResolver(() => [SeasonModel], { name: "seasons" })
+  async seasons(@Root() root: TeamModel): Promise<SeasonModel[]> {
+    const repo = this.teamRepositoryFactory();
+    const team = await repo.findOneOrFail({
+      where: { id: root.id },
+      relations: ["seasons"],
     });
+    return team.seasons;
   }
 }
 

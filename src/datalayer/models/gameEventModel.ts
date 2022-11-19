@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
 
-import { UserToTeamModel } from "./userToTeamModel";
+import { PlayerModel } from "./playerModel";
 import { FixtureModel } from "./fixtureModel";
 import { EventTypeModel } from "./eventTypeModel";
 
@@ -35,8 +35,8 @@ export class GameEventModel extends BaseEntity {
   @ManyToOne(() => FixtureModel, (fixture) => fixture.gameEvents)
   fixture!: FixtureModel;
 
-  @ManyToOne(() => UserToTeamModel, (player) => player.gameEvents)
-  player!: UserToTeamModel;
+  @ManyToOne(() => PlayerModel, (player) => player.gameEvents)
+  player!: PlayerModel;
 
   @ManyToOne(() => EventTypeModel, (eventType) => eventType.gameEvents)
   eventType!: EventTypeModel;

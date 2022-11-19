@@ -10,24 +10,28 @@ import {
   ResolverInterface,
   Root,
 } from "type-graphql";
-import {inject, injectable} from "inversify";
-import {Logger} from "winston";
+import { inject, injectable } from "inversify";
+import { Logger } from "winston";
 
-import {ICryptoService, IMailerService} from "../../services";
+import { ICryptoService, IMailerService } from "../../services";
 import {
   IAuthenticationTokenRepository,
+  IPlayerRepository,
   IUserRepository,
-  IUserToTeamRepository,
   IVerificationTokenRepository,
+  PlayerModel,
   RoleModel,
   RoleName,
   UserModel,
-  UserToTeamModel,
 } from "../../datalayer";
-import {AuthenticationResponse, UserQueryUnion, VerifyTokenResponse,} from "./responseTypes";
-import {FindUserArg} from "./inputTypes";
-import {AppContext} from "../../context";
-import {BadInputResponse, NotFoundResponse} from "../types/responses";
+import {
+  AuthenticationResponse,
+  UserQueryUnion,
+  VerifyTokenResponse,
+} from "./responseTypes";
+import { FindUserArg } from "./inputTypes";
+import { AppContext } from "../../context";
+import { BadInputResponse, NotFoundResponse } from "../types";
 
 @Resolver(() => UserModel)
 @injectable()
@@ -44,8 +48,8 @@ export class UserResolver implements ResolverInterface<UserModel> {
   @inject("UserRepositoryFactory")
   private userRepositoryFactory!: () => IUserRepository;
 
-  @inject("UserToTeamRepositoryFactory")
-  private userToTeamRepositoryFactory!: () => IUserToTeamRepository;
+  @inject("PlayerRepositoryFactory")
+  private playerRepositoryFactory!: () => IPlayerRepository;
 
   @inject("VerificationTokenFactory")
   private verificationTokenRepositoryFactory!: () => IVerificationTokenRepository;
@@ -311,12 +315,12 @@ export class UserResolver implements ResolverInterface<UserModel> {
     });
   }
 
-  @FieldResolver(() => [UserToTeamModel], { name: "teamsPlayerIsOn" })
-  async userToTeams(@Root() user: UserModel): Promise<UserToTeamModel[]> {
-    const repo = this.userToTeamRepositoryFactory();
+  @FieldResolver(() => [PlayerModel])
+  async seasonsAsPlayer(@Root() root: UserModel): Promise<PlayerModel[]> {
+    const repo = this.playerRepositoryFactory();
     return repo.find({
       where: {
-        userId: user.id,
+        userId: root.id,
       },
     });
   }

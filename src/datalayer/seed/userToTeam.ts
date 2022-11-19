@@ -1,5 +1,5 @@
 import _ from "underscore";
-import { RoleModel, TeamModel, UserModel, UserToTeamModel } from "../models";
+import { RoleModel, TeamModel, UserModel, UserToTeamToLeagueModel } from "../models";
 
 const positions = ["defender", "midfield", "striker"];
 
@@ -7,8 +7,8 @@ export async function createUserToTeam(
   user: UserModel,
   team: TeamModel,
   playerRole: RoleModel
-): Promise<UserToTeamModel> {
-  const userToTeamModel = UserToTeamModel.create({
+): Promise<UserToTeamToLeagueModel> {
+  const userToTeamModel = UserToTeamToLeagueModel.create({
     position: _.sample(positions),
     user,
     team,

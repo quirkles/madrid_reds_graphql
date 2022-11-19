@@ -10,7 +10,9 @@ import { Field, ID, ObjectType } from "type-graphql";
 import { DivisionModel } from "./divisionModel";
 
 @Entity({ name: "organization" })
-@ObjectType("Organization", { description: "Organization that runs leagues" })
+@ObjectType("Organization", {
+  description: "Organization that runs seasons of divisions",
+})
 export class OrganizationModel extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   @Field(() => ID)

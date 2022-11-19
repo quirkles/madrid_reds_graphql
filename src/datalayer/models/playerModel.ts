@@ -5,19 +5,22 @@ import {
   ManyToOne,
   BaseEntity,
   ManyToMany,
-  JoinTable, OneToMany,
+  JoinTable,
+  OneToMany,
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
-import { UserModel } from "./userModel";
-import { TeamModel } from "./teamModel";
-import { RoleModel } from "./roleModel";
-import {GameEventModel} from "./gameEventModel";
 
-@Entity({ name: "user_to_team" })
-@ObjectType("TeamPlayer", {
-  description: "A users appearance on a specific team",
+import { UserModel } from "./userModel";
+import { RoleModel } from "./roleModel";
+import { GameEventModel } from "./gameEventModel";
+import { TeamModel } from "./teamModel";
+import { SeasonModel } from "./seasonModel";
+
+@Entity({ name: "player" })
+@ObjectType("Player", {
+  description: "A player is a user on a team for a given season",
 })
-export class UserToTeamModel extends BaseEntity {
+export class PlayerModel extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   public id!: string;
 
@@ -33,13 +36,21 @@ export class UserToTeamModel extends BaseEntity {
   @Column()
   public teamId!: string;
 
+  @Field(() => ID)
+  @Column()
+  seasonId!: string;
+
   @Field(() => UserModel)
-  @ManyToOne(() => UserModel, (user) => user.userToTeams)
-  public user!: UserModel;
+  @ManyToOne(() => UserModel, (user) => user.seasonsAsPlayer)
+  user!: UserModel;
 
   @Field(() => TeamModel)
-  @ManyToOne(() => TeamModel, (team) => team.userToTeams)
-  public team!: TeamModel;
+  @ManyToOne(() => TeamModel, (team) => team.players)
+  team!: TeamModel;
+
+  @Field(() => SeasonModel)
+  @ManyToOne(() => SeasonModel, (season) => season.players)
+  season!: SeasonModel;
 
   @Field(() => [RoleModel])
   @JoinTable()
