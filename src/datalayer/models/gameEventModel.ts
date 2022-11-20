@@ -20,17 +20,17 @@ export class GameEventModel extends BaseEntity {
   @Field(() => ID)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => String)
   @Column()
-  gameTimeOfEvent!: Date;
+  fixtureId!: string;
 
   @Field(() => String)
   @Column()
-  awayTeamId!: string;
+  playerId!: string;
 
   @Field(() => Date)
   @Column()
-  date!: Date;
+  gameTimeOfEvent!: Date;
 
   @ManyToOne(() => FixtureModel, (fixture) => fixture.gameEvents)
   fixture!: FixtureModel;

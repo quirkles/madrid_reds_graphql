@@ -1,6 +1,6 @@
 export { AuthenticationTokenModel } from "./authenticationTokenModel";
 export { DivisionModel } from "./divisionModel";
-export { EventTypeModel } from "./eventTypeModel";
+export { EventTypeModel, GameEventType } from "./eventTypeModel";
 export { FixtureModel } from "./fixtureModel";
 export { GameEventModel } from "./gameEventModel";
 export { OrganizationModel } from "./organizationModel";

@@ -1,6 +1,7 @@
 import { AppDataSource } from "../datasource";
 import {
   DivisionModel,
+  FixtureModel,
   OrganizationModel,
   RoleName,
   TeamModel,
@@ -13,6 +14,8 @@ import { initializeScopes } from "./scopes";
 import { createOrganizations } from "./organization";
 import { createDivisions } from "./division";
 import { createSeasons } from "./season";
+import { initializeEventTypes } from "./eventTypes";
+import { createFixturesForSeason } from "./fixtures";
 
 const USERS_TO_CREATE = 500;
 
@@ -21,6 +24,10 @@ async function main() {
 
   console.log("Seeding scopes");
   const scopes = await initializeScopes();
+
+  console.log("Seeding Event types");
+  const eventTypes = await initializeEventTypes();
+
   console.log("Seeding Roles");
   const roles = await initializeRoles(scopes);
 
@@ -63,6 +70,9 @@ async function main() {
   const organizations: OrganizationModel[] = await createOrganizations();
   const divisions: DivisionModel[] = await createDivisions(organizations);
   const seasons = await createSeasons(divisions, teams, users);
+  for (const season of seasons) {
+    await createFixturesForSeason(season, eventTypes)
+  }
 }
 
 main()
