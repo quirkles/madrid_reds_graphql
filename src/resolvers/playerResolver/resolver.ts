@@ -29,7 +29,7 @@ class PlayerResolver implements ResolverInterface<PlayerModel> {
   @inject("logger")
   private logger!: Logger;
 
-  @FieldResolver(() => TeamInSeasonModel, { name: "seasonPlayedOnTeam" })
+  @FieldResolver(() => TeamInSeasonModel, { name: "team" })
   async teamInSeason(@Root() root: PlayerModel): Promise<TeamInSeasonModel> {
     const repo = this.playerRepositoryFactory();
     return repo

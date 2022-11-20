@@ -39,7 +39,7 @@ export class PlayerModel extends BaseEntity {
   @ManyToOne(() => UserModel, (user) => user.seasonsAsPlayer)
   user!: UserModel;
 
-  @Field(() => TeamInSeasonModel)
+  @Field(() => TeamInSeasonModel, { name: "team" })
   @ManyToOne(() => TeamInSeasonModel, (team) => team.players)
   teamInSeason!: TeamInSeasonModel;
 

@@ -32,7 +32,6 @@ async function createSeason(
     endDate,
     division,
   }).save();
-  console.log("Adding players for season: ", seasonName);
   const seasonPlayers: PlayerModel[] = [];
   for (const teamWithPlayerPool of teamsWithPlayerPools) {
     const { team, playerPool } = teamWithPlayerPool;
@@ -57,13 +56,10 @@ async function createSeason(
     gk.position = "goalkeeper";
     seasonPlayers.push(...players);
   }
-  console.log("Added players for season: ", seasonName);
 
   await Promise.all(seasonPlayers.map((sp) => sp.save()));
 
-  console.log("saving season", seasonName);
   await season.save();
-  console.log("saved season", seasonName);
   return season;
 }
 

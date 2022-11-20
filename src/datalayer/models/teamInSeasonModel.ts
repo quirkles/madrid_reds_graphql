@@ -29,15 +29,15 @@ export class TeamInSeasonModel extends BaseEntity {
   @Column()
   seasonId!: string;
 
-  @Field(() => SeasonModel)
+  @Field(() => SeasonModel, { name: "seasonData" })
   @ManyToOne(() => SeasonModel, (season) => season.teams)
   season!: SeasonModel;
 
-  @Field(() => TeamModel)
+  @Field(() => TeamModel, { name: "teamData" })
   @ManyToOne(() => TeamModel, (team) => team.seasons)
   team!: TeamModel;
 
-  @Field(() => [PlayerModel])
+  @Field(() => [PlayerModel], { name: "squad" })
   @JoinTable()
   @OneToMany(() => PlayerModel, (player) => player.teamInSeason)
   players!: PlayerModel[];
