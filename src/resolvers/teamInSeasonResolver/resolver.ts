@@ -8,15 +8,17 @@ import {
 } from "type-graphql";
 import { inject, injectable } from "inversify";
 import {
-  ITeamRepository,
-  TeamModel,
-  SeasonModel,
-  TeamInSeasonModel,
+  IFixtureRepository,
   ISeasonRepository,
-  PlayerModel,
+  ITeamRepository,
   ITeamInSeasonRepository,
+  PlayerModel,
+  SeasonModel,
+  TeamModel,
+  TeamInSeasonModel,
 } from "../../datalayer";
 import { Logger } from "winston";
+import { Result } from "./responseTypes";
 
 @Resolver(() => TeamInSeasonModel)
 @injectable()
@@ -29,6 +31,9 @@ class TeamInSeasonResolver implements ResolverInterface<TeamInSeasonModel> {
 
   @inject("SeasonRepositoryFactory")
   private seasonRepositoryFactory!: () => ISeasonRepository;
+
+  @inject("FixtureRepositoryFactory")
+  private fixtureRepositoryFactory!: () => IFixtureRepository;
 
   @inject("logger")
   private logger!: Logger;
@@ -59,6 +64,12 @@ class TeamInSeasonResolver implements ResolverInterface<TeamInSeasonModel> {
   async players(@Root() root: TeamInSeasonModel): Promise<PlayerModel[]> {
     const repo = this.teamInSeasonRepositoryFactor();
     return repo.getPlayers(root.id);
+  }
+
+  @FieldResolver(() => [Result])
+  async results(@Root() root: TeamInSeasonModel): Promise<Result[]> {
+    const repo = this.fixtureRepositoryFactory();
+    return repo.findMatchesForTeam(root.id);
   }
 }
 

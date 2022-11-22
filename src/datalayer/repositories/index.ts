@@ -1,5 +1,6 @@
 export * from "./authenticationTokenRepository";
 export * from "./divisionRepository";
+export * from "./fixtureRepository";
 export * from "./organizationRepository";
 export * from "./playerRepository";
 export * from "./roleRepository";

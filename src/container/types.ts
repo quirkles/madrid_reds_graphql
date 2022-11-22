@@ -7,6 +7,7 @@ const TYPES = {
   // Factories
   AuthenticationTokenFactory: "AuthenticationTokenFactory",
   DivisionRepositoryFactory: "DivisionRepositoryFactory",
+  FixtureRepositoryFactory: "FixtureRepositoryFactory",
   OrganizationRepositoryFactory: "OrganizationRepositoryFactory",
   PlayerRepositoryFactory: "PlayerRepositoryFactory",
   RoleRepositoryFactory: "RoleRepositoryFactory",

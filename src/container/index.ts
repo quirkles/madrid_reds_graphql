@@ -22,11 +22,13 @@ import {
   AppDataSource,
   IAuthenticationTokenRepository,
   IDivisionRepository,
+  IFixtureRepository,
   IOrganizationRepository,
   IPlayerRepository,
   IRoleRepository,
   ISeasonRepository,
   ITeamRepository,
+  ITeamInSeasonRepository,
   IUserRepository,
   IVerificationTokenRepository,
   authenticationTokenRepositoryFactory,
@@ -38,8 +40,8 @@ import {
   teamRepositoryFactory,
   userRepositoryFactory,
   verificationTokenRepositoryFactory,
-  ITeamInSeasonRepository,
   teamInSeasonRepositoryFactory,
+  fixtureRepositoryFactory,
 } from "../datalayer";
 
 const container = new Container({ skipBaseClassChecks: true });
@@ -76,6 +78,61 @@ container.bind<IAuthChecker>(TYPES.CustomAuthChecker).to(CustomAuthChecker);
 // Factories
 
 // These repositories are bound as factories because they require the data source to have been initialized, the factories return singleton instances
+
+container
+  .bind<interfaces.Factory<IDivisionRepository>>(
+    TYPES.DivisionRepositoryFactory
+  )
+  .toFactory<IDivisionRepository>((context: interfaces.Context) => {
+    return () => {
+      return divisionRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
+container
+  .bind<interfaces.Factory<IFixtureRepository>>(TYPES.FixtureRepositoryFactory)
+  .toFactory<IFixtureRepository>((context: interfaces.Context) => {
+    return () => {
+      return fixtureRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
+container
+  .bind<interfaces.Factory<IOrganizationRepository>>(
+    TYPES.OrganizationRepositoryFactory
+  )
+  .toFactory<IOrganizationRepository>((context: interfaces.Context) => {
+    return () => {
+      return organizationRepositoryFactory(
+        context.container.get(TYPES.dataSource)
+      );
+    };
+  });
+
+container
+  .bind<interfaces.Factory<IPlayerRepository>>(TYPES.PlayerRepositoryFactory)
+  .toFactory<IPlayerRepository>((context: interfaces.Context) => {
+    return () => {
+      return playerRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
+container
+  .bind<interfaces.Factory<IUserRepository>>(TYPES.RoleRepositoryFactory)
+  .toFactory<IRoleRepository>((context: interfaces.Context) => {
+    return () => {
+      return roleRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
+container
+  .bind<interfaces.Factory<ISeasonRepository>>(TYPES.SeasonRepositoryFactory)
+  .toFactory<ISeasonRepository>((context: interfaces.Context) => {
+    return () => {
+      return seasonRepositoryFactory(context.container.get(TYPES.dataSource));
+    };
+  });
+
 container
   .bind<interfaces.Factory<ITeamRepository>>(TYPES.TeamRepositoryFactory)
   .toFactory<ITeamRepository>((context: interfaces.Context) => {
@@ -101,52 +158,6 @@ container
   .toFactory<IUserRepository>((context: interfaces.Context) => {
     return () => {
       return userRepositoryFactory(context.container.get(TYPES.dataSource));
-    };
-  });
-
-container
-  .bind<interfaces.Factory<IDivisionRepository>>(
-    TYPES.DivisionRepositoryFactory
-  )
-  .toFactory<IDivisionRepository>((context: interfaces.Context) => {
-    return () => {
-      return divisionRepositoryFactory(context.container.get(TYPES.dataSource));
-    };
-  });
-
-container
-  .bind<interfaces.Factory<IOrganizationRepository>>(
-    TYPES.OrganizationRepositoryFactory
-  )
-  .toFactory<IOrganizationRepository>((context: interfaces.Context) => {
-    return () => {
-      return organizationRepositoryFactory(
-        context.container.get(TYPES.dataSource)
-      );
-    };
-  });
-
-container
-  .bind<interfaces.Factory<IUserRepository>>(TYPES.RoleRepositoryFactory)
-  .toFactory<IRoleRepository>((context: interfaces.Context) => {
-    return () => {
-      return roleRepositoryFactory(context.container.get(TYPES.dataSource));
-    };
-  });
-
-container
-  .bind<interfaces.Factory<ISeasonRepository>>(TYPES.SeasonRepositoryFactory)
-  .toFactory<ISeasonRepository>((context: interfaces.Context) => {
-    return () => {
-      return seasonRepositoryFactory(context.container.get(TYPES.dataSource));
-    };
-  });
-
-container
-  .bind<interfaces.Factory<IPlayerRepository>>(TYPES.PlayerRepositoryFactory)
-  .toFactory<IPlayerRepository>((context: interfaces.Context) => {
-    return () => {
-      return playerRepositoryFactory(context.container.get(TYPES.dataSource));
     };
   });
 
