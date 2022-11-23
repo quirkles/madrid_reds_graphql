@@ -1,5 +1,5 @@
 import { DataSource, Repository } from "typeorm";
-import { PlayerModel } from "../models";
+import { PlayerModel } from "../../models";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IPlayerRepository extends Repository<PlayerModel> {}

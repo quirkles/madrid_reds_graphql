@@ -1,5 +1,5 @@
 import { DataSource, Repository } from "typeorm";
-import { PlayerModel, TeamInSeasonModel } from "../models";
+import { PlayerModel, TeamInSeasonModel } from "../../models";
 
 export type ITeamInSeasonRepository = Repository<TeamInSeasonModel> & {
   getPlayers(teamInSeasonId: string): Promise<PlayerModel[]>;

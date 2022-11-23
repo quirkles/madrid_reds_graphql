@@ -1,31 +1,31 @@
 import { DataSource, Repository } from "typeorm";
-import { ICryptoService } from "../../services";
-import { AuthenticationTokenModel, UserModel } from "../models";
+import { UserModel, VerificationTokenModel } from "../../models";
+import { ICryptoService } from "../../../services";
 
-export type IAuthenticationTokenRepository =
-  Repository<AuthenticationTokenModel> & {
+export type IVerificationTokenRepository =
+  Repository<VerificationTokenModel> & {
     createTokenForUser(user: UserModel): Promise<{
-      authenticationToken: AuthenticationTokenModel;
+      verificationToken: VerificationTokenModel;
       initializationVector: string;
       token: string;
     }>;
-    authenticateUserWithToken(
-      token: AuthenticationTokenModel
-    ): Promise<AuthenticationTokenModel>;
+    verifyUserWithToken(
+      token: VerificationTokenModel
+    ): Promise<VerificationTokenModel>;
   };
 
-let repoSingleton: IAuthenticationTokenRepository;
+let repoSingleton: IVerificationTokenRepository;
 
-export function authenticationTokenRepositoryFactory(
+export function verificationTokenRepositoryFactory(
   datasource: DataSource,
   cryptoService: ICryptoService
-): IAuthenticationTokenRepository {
+): IVerificationTokenRepository {
   if (!repoSingleton) {
     repoSingleton = datasource
-      .getRepository<AuthenticationTokenModel>(AuthenticationTokenModel)
+      .getRepository<VerificationTokenModel>(VerificationTokenModel)
       .extend({
         async createTokenForUser(user: UserModel): Promise<{
-          authenticationToken: AuthenticationTokenModel;
+          verificationToken: VerificationTokenModel;
           initializationVector: string;
           token: string;
         }> {
@@ -37,26 +37,26 @@ export function authenticationTokenRepositoryFactory(
           const { result, initializationVector } = await cryptoService.encrypt({
             unencryptedInput: tokenString,
           });
-
-          const authenticationToken = this.create({
+          const verificationToken = this.create({
             email: user.emailAddress,
             secret,
-            createdAt: Date.now(),
             user,
+            createdAt: Date.now(),
           });
-
-          await authenticationToken.save();
+          await verificationToken.save();
           return {
-            authenticationToken,
+            verificationToken,
             initializationVector: initializationVector.toString("hex"),
             token: result,
           };
         },
 
-        async authenticateUserWithToken(
-          token: AuthenticationTokenModel
-        ): Promise<AuthenticationTokenModel> {
-          token.authenticatedAt = Date.now();
+        async verifyUserWithToken(
+          token: VerificationTokenModel
+        ): Promise<VerificationTokenModel> {
+          token.verifiedAt = Date.now();
+          token.user.isVerified = true;
+          await token.user.save();
           return this.save(token);
         },
       });

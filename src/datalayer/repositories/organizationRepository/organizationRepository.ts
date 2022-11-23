@@ -1,5 +1,5 @@
 import { DataSource, Repository } from "typeorm";
-import { OrganizationModel } from "../models";
+import { OrganizationModel } from "../../models";
 
 export type IOrganizationRepository = Repository<OrganizationModel>;
 

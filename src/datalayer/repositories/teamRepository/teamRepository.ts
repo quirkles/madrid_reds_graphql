@@ -1,5 +1,5 @@
 import { DataSource, Repository } from "typeorm";
-import { TeamModel } from "../models";
+import { TeamModel } from "../../models";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITeamRepository extends Repository<TeamModel> {}

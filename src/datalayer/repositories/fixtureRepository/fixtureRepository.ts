@@ -1,6 +1,7 @@
 import { DataSource, Repository } from "typeorm";
-import { FixtureModel } from "../models";
-import { Result } from "../../resolvers/teamInSeasonResolver/responseTypes";
+import { FixtureModel } from "../../models";
+import { Result } from "../../../resolvers/teamInSeasonResolver/responseTypes";
+import {getMatchDataFromFixture} from "./getMatchDataFromFixture";
 
 export type IFixtureRepository = Repository<FixtureModel> & {
   findMatchesForTeam(teamId: string): Promise<Result[]>;
@@ -14,7 +15,7 @@ export function fixtureRepositoryFactory(
   if (!repoSingleton) {
     repoSingleton = datasource.getRepository(FixtureModel).extend({
       async findMatchesForTeam(teamId: string): Promise<Result[]> {
-        const data = await this.createQueryBuilder("fixture")
+        const data: FixtureModel[] = await this.createQueryBuilder("fixture")
           .leftJoinAndSelect("fixture.homeTeam", "homeTeam")
           .leftJoinAndSelect("homeTeam.team", "homeTeamDetails")
           .leftJoinAndSelect("fixture.awayTeam", "awayTeam")
@@ -33,7 +34,7 @@ export function fixtureRepositoryFactory(
             awayTeamId: teamId,
           })
           .getMany();
-        return [];
+        return data.map(getMatchDataFromFixture);
       },
     });
   }

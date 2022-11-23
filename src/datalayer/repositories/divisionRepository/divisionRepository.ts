@@ -1,5 +1,5 @@
 import { DataSource, Repository } from "typeorm";
-import { DivisionModel } from "../models";
+import { DivisionModel } from "../../models";
 
 export type IDivisionRepository = Repository<DivisionModel>;
 

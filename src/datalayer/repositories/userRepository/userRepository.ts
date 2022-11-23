@@ -1,5 +1,5 @@
 import { DataSource, Repository } from "typeorm";
-import { RoleModel, UserModel } from "../models";
+import { RoleModel, UserModel } from "../../models";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export type IUserRepository = Repository<UserModel> & {

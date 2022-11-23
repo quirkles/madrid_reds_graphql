@@ -1,5 +1,5 @@
 import { DataSource, Repository } from "typeorm";
-import { RoleModel } from "../models";
+import { RoleModel } from "../../models";
 
 export type IRoleRepository = Repository<RoleModel>;
 
