@@ -1,8 +1,5 @@
 import { FixtureModel, GameEventType } from "../../models";
-import {
-  Result,
-  TeamResult,
-} from "../../../resolvers/teamInSeasonResolver/responseTypes";
+import { Result, TeamResult } from "../../../resolvers";
 
 export function getMatchDataFromFixture(fixture: FixtureModel): Result {
   const { season, homeTeam, awayTeam, gameEvents } = fixture;

@@ -1,11 +1,20 @@
-import { FieldResolver, Resolver, ResolverInterface, Root } from "type-graphql";
+import {
+  Arg, Args,
+  FieldResolver,
+  Mutation,
+  Resolver,
+  ResolverInterface,
+  Root,
+} from "type-graphql";
 import { inject, injectable } from "inversify";
 import {
   DivisionModel,
   IDivisionRepository,
+  IOrganizationRepository,
   OrganizationModel,
 } from "../../datalayer";
 import { Logger } from "winston";
+import { CreateOrganizationInput } from "./inputTypes";
 
 @Resolver(() => OrganizationModel)
 @injectable()
@@ -15,6 +24,9 @@ class OrganizationResolver implements ResolverInterface<OrganizationModel> {
 
   @inject("DivisionRepositoryFactory")
   private divisionRepositoryFactory!: () => IDivisionRepository;
+
+  @inject("OrganizationRepositoryFactory")
+  private organizationRepositoryFactory!: () => IOrganizationRepository;
 
   @FieldResolver(() => [DivisionModel])
   async divisions(
@@ -26,6 +38,14 @@ class OrganizationResolver implements ResolverInterface<OrganizationModel> {
         organizationId: organization.id,
       },
     });
+  }
+
+  @Mutation(() => OrganizationModel)
+  async createOrganization(
+    @Arg("createOrganizationInput") input: CreateOrganizationInput
+  ): Promise<OrganizationModel> {
+    const organizationRepository = this.organizationRepositoryFactory();
+    return organizationRepository.createOrganization(input);
   }
 }
 

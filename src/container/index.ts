@@ -46,7 +46,7 @@ import {
 
 const container = new Container({ skipBaseClassChecks: true });
 // Constants
-const sharedCryptoService = new CryptoService(appConfig); // we use a shared instance so we can generate an iv each time
+const sharedCryptoService = new CryptoService(appConfig); // we use a shared instance, so we can generate an iv each time
 container
   .bind<ICryptoService>(TYPES.cryptoService)
   .toConstantValue(sharedCryptoService);
@@ -104,7 +104,8 @@ container
   .toFactory<IOrganizationRepository>((context: interfaces.Context) => {
     return () => {
       return organizationRepositoryFactory(
-        context.container.get(TYPES.dataSource)
+        context.container.get(TYPES.dataSource),
+        context.container.get(TYPES.DivisionRepositoryFactory)
       );
     };
   });
