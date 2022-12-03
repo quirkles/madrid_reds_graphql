@@ -3,6 +3,7 @@ const TYPES = {
   UserResolver: "UserResolver",
   MailerService: "MailerService",
   CustomAuthChecker: "CustomAuthChecker",
+  AuthorizationService: "AuthorizationService",
 
   // Factories
   AuthenticationTokenFactory: "AuthenticationTokenFactory",

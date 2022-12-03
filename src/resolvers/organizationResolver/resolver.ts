@@ -1,5 +1,7 @@
 import {
-  Arg, Args,
+  Arg,
+  Authorized,
+  Ctx,
   FieldResolver,
   Mutation,
   Resolver,
@@ -15,6 +17,9 @@ import {
 } from "../../datalayer";
 import { Logger } from "winston";
 import { CreateOrganizationInput } from "./inputTypes";
+import { CreateOrganizationUnion } from "./responseTypes";
+import { AppContext } from "../../context";
+import { UnauthorizedResponse } from "../types/responses/unauthorizedResponse";
 
 @Resolver(() => OrganizationModel)
 @injectable()
@@ -40,10 +45,15 @@ class OrganizationResolver implements ResolverInterface<OrganizationModel> {
     });
   }
 
-  @Mutation(() => OrganizationModel)
+  @Mutation(() => CreateOrganizationUnion)
+  @Authorized()
   async createOrganization(
-    @Arg("createOrganizationInput") input: CreateOrganizationInput
-  ): Promise<OrganizationModel> {
+    @Arg("createOrganizationInput") input: CreateOrganizationInput,
+    @Ctx() context: AppContext
+  ): Promise<typeof CreateOrganizationUnion> {
+    if (Math.random() < 0.99999) {
+      return new UnauthorizedResponse();
+    }
     const organizationRepository = this.organizationRepositoryFactory();
     return organizationRepository.createOrganization(input);
   }

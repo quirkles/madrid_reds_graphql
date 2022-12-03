@@ -19,7 +19,7 @@ export const RoleName = {
   CAPTAIN: "CAPTAIN",
 } as const;
 
-export type Role = typeof RoleName[keyof typeof RoleName];
+export type TRoleName = typeof RoleName[keyof typeof RoleName];
 
 registerEnumType(RoleName, {
   name: "RoleName", // this one is mandatory
@@ -35,7 +35,7 @@ export class RoleModel extends BaseEntity {
 
   @Field(() => RoleName)
   @Column({ nullable: false, unique: true })
-  roleName!: string;
+  roleName!: TRoleName;
 
   @Column("string")
   scopeId!: string;

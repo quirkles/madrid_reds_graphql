@@ -128,8 +128,6 @@ class CryptoService implements ICryptoService {
   }
 
   verifyAndDecryptJwt(token: string): Promise<JwtBody> {
-    console.log(`\nJWT SECRET: "${this.jwtSecret}"\n`);
-    console.log(`\ntoken: "${token}\n"`);
     return new Promise((resolve, reject) => {
       verify(token, this.jwtSecret, (err, decoded) => {
         if (err) {

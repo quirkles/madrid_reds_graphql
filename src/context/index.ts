@@ -3,11 +3,15 @@ import { type IncomingMessage, ServerResponse } from "http";
 import { Logger } from "winston";
 import { v4 } from "uuid";
 import { container, TYPES } from "../container";
+import { TRoleName } from "../datalayer";
+
+export interface AppContextSessionUserObject {
+  jwt: string;
+  roles?: TRoleName[];
+}
 
 export interface AppContext {
-  sessionUser?: {
-    jwt: string;
-  };
+  sessionUser: AppContextSessionUserObject | null;
   container: Container;
   logger: Logger;
 }
@@ -15,15 +19,14 @@ export interface AppContext {
 export function createContextFunction(logger: Logger) {
   return async function (contextArg: {
     req: IncomingMessage;
-    res: ServerResponse;
+    res: ServerResponse & { req: { body: string } };
   }): Promise<AppContext> {
     const childLogger: Logger = logger.child({
       requestId: v4(),
-      url: contextArg.req.url || "unknown",
-      method: contextArg.req.method || "unknown",
     });
-
-    childLogger.info("Incoming request");
+    childLogger.info("Incoming request body", {
+      body: contextArg.res.req.body,
+    });
 
     const childContainer = container.createChild();
 
@@ -32,6 +35,7 @@ export function createContextFunction(logger: Logger) {
     const context: AppContext = {
       logger: childLogger,
       container: childContainer,
+      sessionUser: null,
     };
 
     // Try to grab the jwt from the auth header

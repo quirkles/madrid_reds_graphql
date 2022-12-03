@@ -1,6 +1,7 @@
 import { createUnionType, Field, ObjectType } from "type-graphql";
+
 import { UserModel } from "../../datalayer";
-import { BadInputResponse, NotFoundResponse } from "../types/responses";
+import { BadInputResponse, NotFoundResponse } from "../types";
 
 @ObjectType()
 export class VerifyTokenResponse {

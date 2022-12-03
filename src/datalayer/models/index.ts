@@ -5,7 +5,7 @@ export { FixtureModel } from "./fixtureModel";
 export { GameEventModel } from "./gameEventModel";
 export { OrganizationModel } from "./organizationModel";
 export { PlayerModel } from "./playerModel";
-export { RoleModel, RoleName } from "./roleModel";
+export { RoleModel, RoleName, TRoleName } from "./roleModel";
 export { RoleScopeModel, RoleScopeName } from "./roleScopeModel";
 export { SeasonModel } from "./seasonModel";
 export { TeamModel } from "./teamModel";

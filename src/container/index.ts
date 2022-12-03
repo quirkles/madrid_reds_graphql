@@ -9,6 +9,8 @@ import {
   MailerService,
   CustomAuthChecker,
   IAuthChecker,
+  IAuthorizationService,
+  AuthorizationService,
 } from "../services";
 import {
   UserResolver,
@@ -74,6 +76,9 @@ container
 // Services
 container.bind<IMailerService>(TYPES.MailerService).to(MailerService);
 container.bind<IAuthChecker>(TYPES.CustomAuthChecker).to(CustomAuthChecker);
+container
+  .bind<IAuthorizationService>(TYPES.AuthorizationService)
+  .to(AuthorizationService);
 
 // Factories
 
