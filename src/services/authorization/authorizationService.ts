@@ -13,7 +13,7 @@ export interface IAuthorizationService {
   doesSessionUserUserHaveRole(
     sessionUser: AppContextSessionUserObject,
     roleName: TRoleName
-  ): Promise<boolean>;
+  ): boolean;
   doesUserHaveRole(user: UserModel, roleName: TRoleName): Promise<boolean>;
   doesPlayerOnTeamHaveTeamRole(
     player: PlayerModel,
@@ -42,8 +42,11 @@ class AuthorizationService implements IAuthorizationService {
   doesSessionUserUserHaveRole(
     sessionUser: AppContextSessionUserObject,
     roleName: TRoleName
-  ): Promise<boolean> {
-    return Promise.resolve(false);
+  ): boolean {
+    if (!sessionUser.roles) {
+      return false;
+    }
+    return sessionUser.roles.includes(roleName);
   }
 
   doesUserHaveRole(user: UserModel, roleName: TRoleName): Promise<boolean> {
